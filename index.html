@@ -32,6 +32,8 @@
         th .sort-arrow.desc::after { content: '▼'; }
         /* Center align foil icon */
         td.foil-cell { text-align: center; }
+        /* Right align numeric columns */
+        td.number-cell, th.number-header { text-align: right; }
 
     </style>
 </head>
@@ -40,14 +42,15 @@
     <div class="container mx-auto p-4 md:p-6 lg:p-8">
         <header class="mb-8 text-center">
             <h1 class="text-3xl md:text-4xl font-bold text-slate-800">Magic Card Sales Tracker</h1>
-            <p class="text-slate-600 mt-1">Upload CSVs to analyze your Cardmarket sales and track inventory.</p>
+            <p class="text-slate-600 mt-1">Upload CSVs (and optionally a product catalog JSON) to analyze sales and track inventory.</p>
         </header>
 
         <main>
-            <section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                 <div class="p-4 border border-slate-300 rounded-lg shadow-sm bg-white"> <label for="cardmarket-csv" class="block text-sm font-medium text-slate-700 mb-2"> 1. Cardmarket Sales CSV (Del: ';') </label> <input id="cardmarket-csv" type="file" accept=".csv" class="block w-full text-sm text-slate-600 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"> <div id="cardmarket-feedback" class="text-xs mt-1"></div> </div>
-                 <div class="p-4 border border-slate-300 rounded-lg shadow-sm bg-white"> <label for="sold-articles-csv" class="block text-sm font-medium text-slate-700 mb-2"> 2. Sold Articles CSV (Del: ';') </label> <input id="sold-articles-csv" type="file" accept=".csv" class="block w-full text-sm text-slate-600 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"> <div id="sold-articles-feedback" class="text-xs mt-1"></div> </div>
-                 <div class="p-4 border border-slate-300 rounded-lg shadow-sm bg-white"> <label for="manabox-csv" class="block text-sm font-medium text-slate-700 mb-2"> 3. ManaBox Inventory CSV (Del: ',') </label> <input id="manabox-csv" type="file" accept=".csv" class="block w-full text-sm text-slate-600 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"> <div id="manabox-feedback" class="text-xs mt-1"></div> </div>
+            <section class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                 <div class="p-4 border border-slate-300 rounded-lg shadow-sm bg-white"> <label for="cardmarket-csv" class="block text-sm font-medium text-slate-700 mb-2">1. Sales CSV</label> <input id="cardmarket-csv" type="file" accept=".csv" class="block w-full text-sm text-slate-600 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"> <div id="cardmarket-feedback" class="text-xs mt-1"></div> </div>
+                 <div class="p-4 border border-slate-300 rounded-lg shadow-sm bg-white"> <label for="sold-articles-csv" class="block text-sm font-medium text-slate-700 mb-2">2. Sold Articles CSV</label> <input id="sold-articles-csv" type="file" accept=".csv" class="block w-full text-sm text-slate-600 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"> <div id="sold-articles-feedback" class="text-xs mt-1"></div> </div>
+                 <div class="p-4 border border-slate-300 rounded-lg shadow-sm bg-white"> <label for="manabox-csv" class="block text-sm font-medium text-slate-700 mb-2">3. Inventory CSV</label> <input id="manabox-csv" type="file" accept=".csv" class="block w-full text-sm text-slate-600 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"> <div id="manabox-feedback" class="text-xs mt-1"></div> </div>
+                 <div class="p-4 border border-slate-300 rounded-lg shadow-sm bg-white"> <label for="product-catalog-json" class="block text-sm font-medium text-slate-700 mb-2">4. Product Catalog JSON (Opt.)</label> <input id="product-catalog-json" type="file" accept=".json,application/json" class="block w-full text-sm text-slate-600 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"> <div id="product-catalog-feedback" class="text-xs mt-1"></div> </div>
             </section>
 
             <section class="mb-6 text-center md:text-right">
@@ -64,12 +67,7 @@
                     <div class="p-3 bg-yellow-100 rounded-md border border-yellow-200"> <p class="text-sm text-yellow-800 font-medium">Shipping Charged</p> <p id="total-shipping" class="text-lg font-bold text-yellow-900">€0.00</p> <p class="text-xs text-yellow-700 mt-1">(Revenue - Item Val)</p> </div>
                     <div class="p-3 bg-blue-100 rounded-md border border-blue-200"> <p class="text-sm text-blue-800 font-medium">Net Earnings</p> <p id="net-earnings" class="text-lg font-bold text-blue-900">€0.00</p> <p class="text-xs text-blue-700 mt-1">(Rev - Fees - Ship)</p> </div>
                      <div class="p-3 bg-purple-100 rounded-md border border-purple-200"> <p class="text-sm text-purple-800 font-medium">Inventory Value</p> <p id="total-inventory-value" class="text-lg font-bold text-purple-900">€0.00</p> <p id="percentage-earned" class="text-xs text-purple-700 mt-1">(0% Earned vs Revenue)</p> </div>
-                     <div class="p-3 bg-indigo-100 rounded-md border border-indigo-200">
-                        <p class="text-sm text-indigo-800 font-medium">Sold Value vs Est.</p>
-                        <p id="sold-actual-value" class="text-base font-bold text-indigo-900">€0.00 <span class="text-xs font-normal">(Actual)</span></p>
-                        <p id="sold-estimated-value" class="text-sm font-medium text-indigo-700">vs €0.00 <span class="text-xs font-normal">(Est.)</span></p>
-                        <p id="sold-percentage-reached" class="text-xs text-indigo-700 mt-1">(0% of Est. Reached)</p>
-                    </div>
+                     <div class="p-3 bg-indigo-100 rounded-md border border-indigo-200"> <p class="text-sm text-indigo-800 font-medium">Sold Value vs Est.</p> <p id="sold-actual-value" class="text-base font-bold text-indigo-900">€0.00 <span class="text-xs font-normal">(Actual)</span></p> <p id="sold-estimated-value" class="text-sm font-medium text-indigo-700">vs €0.00 <span class="text-xs font-normal">(Est.)</span></p> <p id="sold-percentage-reached" class="text-xs text-indigo-700 mt-1">(0% of Est. Reached)</p> </div>
                 </div>
                  <div id="summary-placeholder" class="text-slate-500">Upload CSVs to see the summary.</div>
             </section>
@@ -94,34 +92,33 @@
 
     <script>
         // --- Constants ---
-        const SALES_DATA_STORAGE_KEY = 'magicCardmarketSalesData_html_v12'; // Incremented version
-        const SOLD_ARTICLES_STORAGE_KEY = 'magicSoldArticlesData_html_v12';
-        const INVENTORY_DATA_STORAGE_KEY = 'magicManaboxInventoryData_html_v12';
+        const SALES_DATA_STORAGE_KEY = 'magicCardmarketSalesData_html_v13';
+        const SOLD_ARTICLES_STORAGE_KEY = 'magicSoldArticlesData_html_v13';
+        const INVENTORY_DATA_STORAGE_KEY = 'magicManaboxInventoryData_html_v13';
+        const PRODUCT_CATALOG_STORAGE_KEY = 'magicProductCatalogData_html_v13';
         // CM Sales Columns
         const CM_REF_COLUMN = 'Reference'; const CM_CATEGORY_COLUMN = 'Category'; const CM_TYPE_COLUMN = 'Type'; const CM_AMOUNT_COLUMN = 'Amount';
         // Sold Articles Columns
         const SA_SHIPMENT_NR_COL = 'Shipment nr.'; const SA_ARTICLE_VALUE_COL = 'Article Value'; const SA_ARTICLE_NAME_COL = 'Article'; const SA_SET_NAME_COL = 'Expansion'; const SA_AMOUNT_COL = 'Amount';
         // ManaBox Inventory Columns
-        const MB_NAME_COL = 'Name'; const MB_SET_NAME_COL = 'Set name'; const MB_SET_CODE_COL = 'Set code'; const MB_QUANTITY_COL = 'Quantity'; const MB_FOIL_COL = 'Foil'; const MB_PURCHASE_PRICE_COL = 'Purchase price'; const MB_CONDITION_COL = 'Condition'; const MB_LANGUAGE_COL = 'Language';
+        const MB_NAME_COL = 'Name'; const MB_SET_NAME_COL = 'Set name'; const MB_SET_CODE_COL = 'Set code'; const MB_COLLECTOR_NR_COL = 'Collector number'; const MB_QUANTITY_COL = 'Quantity'; const MB_FOIL_COL = 'Foil'; const MB_PURCHASE_PRICE_COL = 'Purchase price'; const MB_CONDITION_COL = 'Condition'; const MB_LANGUAGE_COL = 'Language';
 
         // --- State Variables ---
         let salesData = [];
         let soldArticlesData = [];
         let inventoryData = [];
+        let productCatalogData = null;
         let inventoryStatusData = [];
         let currentInventoryFilter = { name: '' };
         let currentInventorySort = { key: 'Name', direction: 'asc' };
-        // *** Added new keys for sold comparison ***
         let calculatedTotals = { revenue: 0, fees: 0, shippingCharged: 0, netEarnings: 0, inventoryValue: 0, soldActualValue: 0, soldEstimatedValue: 0 };
 
         // --- DOM Element References ---
-        const cardmarketInput = document.getElementById('cardmarket-csv'); const soldArticlesInput = document.getElementById('sold-articles-csv'); const manaboxInput = document.getElementById('manabox-csv'); const cardmarketFeedbackEl = document.getElementById('cardmarket-feedback'); const soldArticlesFeedbackEl = document.getElementById('sold-articles-feedback'); const manaboxFeedbackEl = document.getElementById('manabox-feedback'); const clearDataButton = document.getElementById('clear-data-button'); const clearDataFeedbackEl = document.getElementById('clear-data-feedback');
+        const cardmarketInput = document.getElementById('cardmarket-csv'); const soldArticlesInput = document.getElementById('sold-articles-csv'); const manaboxInput = document.getElementById('manabox-csv'); const productCatalogInput = document.getElementById('product-catalog-json');
+        const cardmarketFeedbackEl = document.getElementById('cardmarket-feedback'); const soldArticlesFeedbackEl = document.getElementById('sold-articles-feedback'); const manaboxFeedbackEl = document.getElementById('manabox-feedback'); const productCatalogFeedbackEl = document.getElementById('product-catalog-feedback');
+        const clearDataButton = document.getElementById('clear-data-button'); const clearDataFeedbackEl = document.getElementById('clear-data-feedback');
         const summaryContentEl = document.getElementById('summary-content'); const summaryPlaceholderEl = document.getElementById('summary-placeholder'); const summaryErrorEl = document.getElementById('summary-error'); const totalRevenueEl = document.getElementById('total-revenue'); const totalFeesEl = document.getElementById('total-fees'); const totalShippingEl = document.getElementById('total-shipping'); const netEarningsEl = document.getElementById('net-earnings'); const totalInventoryValueEl = document.getElementById('total-inventory-value'); const percentageEarnedEl = document.getElementById('percentage-earned');
-        // *** New summary elements ***
-        const soldActualValueEl = document.getElementById('sold-actual-value');
-        const soldEstimatedValueEl = document.getElementById('sold-estimated-value');
-        const soldPercentageReachedEl = document.getElementById('sold-percentage-reached');
-        // Tabs
+        const soldActualValueEl = document.getElementById('sold-actual-value'); const soldEstimatedValueEl = document.getElementById('sold-estimated-value'); const soldPercentageReachedEl = document.getElementById('sold-percentage-reached');
         const tabButtonsContainer = document.getElementById('tab-buttons'); const tabContentContainer = document.getElementById('tab-content');
         // Transaction Breakdown
         const transactionBreakdownContainer = document.getElementById('transaction-breakdown-container'); const transactionBreakdownPlaceholder = document.getElementById('transaction-breakdown-placeholder'); const transactionBreakdownError = document.getElementById('transaction-breakdown-error');
@@ -129,15 +126,11 @@
         const inventoryFilterNameInput = document.getElementById('inventory-filter-name'); const inventoryStatusTableContainer = document.getElementById('inventory-status-table-container'); const inventoryStatusTableHead = document.getElementById('inventory-status-table-head'); const inventoryStatusTableBody = document.getElementById('inventory-status-table-body'); const inventoryStatusPlaceholder = document.getElementById('inventory-status-placeholder'); const inventoryStatusError = document.getElementById('inventory-status-error');
 
         // --- Helper Functions ---
+        function normalizeString(str) { if (typeof str !== 'string') return ''; return str.trim().toLowerCase(); } // Use simple normalization now
         function parseCurrency(value) { if (value === null || value === undefined || value === '') return 0; let s = String(value).replace(/[€$£¥\s]/g, '').replace(',', '.'); const n = parseFloat(s); return isNaN(n) ? 0 : n; }
         function formatCell(value) { if (value === null || value === undefined) return ''; return String(value); }
         function formatCurrency(value) { return `€${Number(value).toFixed(2)}`; }
         function updateFeedback(el, msg, type = 'info') { el.textContent = msg; el.className = 'text-xs mt-1'; if (type === 'success') el.classList.add('text-green-700'); else if (type === 'error') el.classList.add('text-red-600'); else el.classList.add('text-slate-600'); }
-        // Reverted normalizeString: Does NOT remove parentheses anymore for matching
-        function normalizeString(str) {
-            if (typeof str !== 'string') return '';
-            return str.trim().toLowerCase();
-        }
         function parseCSV(csvText, delimiter) { if (!csvText || typeof csvText !== 'string') { console.error("parseCSV: Input must be a non-empty string."); return null; } if (!delimiter || typeof delimiter !== 'string' || delimiter.length !== 1) { console.error("parseCSV: Delimiter must be a single character."); return null; } try { const lines = csvText.trim().split(/\r?\n/); if (lines.length < 2) return []; const headers = lines[0].split(delimiter).map(h => h.trim()); const results = []; for (let i = 1; i < lines.length; i++) { const line = lines[i].trim(); if (line === '') continue; const values = []; let currentValue = ''; let inQuotes = false; for (let j = 0; j < line.length; j++) { const char = line[j]; if (char === '"') inQuotes = !inQuotes; else if (char === delimiter && !inQuotes) { values.push(currentValue.trim()); currentValue = ''; } else currentValue += char; } values.push(currentValue.trim()); if (values.length === headers.length) { const entry = {}; for (let k = 0; k < headers.length; k++) { let value = values[k]; if (value.startsWith('"') && value.endsWith('"')) value = value.substring(1, value.length - 1); const headerKey = headers[k] || `unknown_header_${k}`; entry[headerKey] = value; } results.push(entry); } else { console.warn(`Skipping row ${i + 1}: Value count (${values.length}) != Header count (${headers.length}). Line: "${line}"`); } } return results; } catch (error) { console.error("Error during custom CSV parsing:", error); return null; } }
 
         // --- Core Logic Functions ---
@@ -146,21 +139,27 @@
             const file = event.target.files ? event.target.files[0] : null;
             const inputElement = event.target;
             if (!file) { updateFeedback(feedbackEl, '', 'info'); return; }
-            if (!file.name.toLowerCase().endsWith('.csv')) { updateFeedback(feedbackEl, 'Invalid file type (.csv required).', 'error'); inputElement.value = ''; return; }
             const fileName = file.name;
             updateFeedback(feedbackEl, `Reading ${fileName}...`, 'info');
             const reader = new FileReader();
             reader.onload = (e) => {
                 const fileContent = e.target.result;
-                updateFeedback(feedbackEl, `Parsing ${fileName}...`, 'info');
-                const parsedData = parseCSV(fileContent, delimiter);
-                if (parsedData === null) { updateFeedback(feedbackEl, `Error parsing ${fileName}. Check console.`, 'error'); inputElement.value = ''; return; }
-                const rowCount = parsedData.length;
-                updateFeedback(feedbackEl, `Loaded ${fileName} (${rowCount} data rows).`, 'success');
                 let needsFullUpdate = false;
-                if (dataType === 'sales') { salesData = parsedData; saveSalesToLocalStorage(); needsFullUpdate = true; }
-                else if (dataType === 'soldArticles') { soldArticlesData = parsedData; saveSoldArticlesToLocalStorage(); needsFullUpdate = true; }
-                else if (dataType === 'inventory') { inventoryData = parsedData; saveInventoryToLocalStorage(); needsFullUpdate = true; }
+                if (dataType === 'catalog') {
+                    try { productCatalogData = JSON.parse(fileContent); saveProductCatalogToLocalStorage(); updateFeedback(feedbackEl, `Loaded ${fileName}.`, 'success'); console.log("Product catalog loaded:", productCatalogData?.products?.length || 0, "products"); }
+                    catch (error) { console.error("Error parsing product catalog JSON:", error); updateFeedback(feedbackEl, `Error parsing ${fileName}. Not valid JSON.`, 'error'); inputElement.value = ''; productCatalogData = null; return; }
+                } else {
+                    const expectedExtension = '.csv';
+                    if (!fileName.toLowerCase().endsWith(expectedExtension)) { updateFeedback(feedbackEl, `Invalid file type (expected ${expectedExtension}).`, 'error'); inputElement.value = ''; return; }
+                    updateFeedback(feedbackEl, `Parsing ${fileName}...`, 'info');
+                    const parsedData = parseCSV(fileContent, delimiter);
+                    if (parsedData === null) { updateFeedback(feedbackEl, `Error parsing ${fileName}. Check console.`, 'error'); inputElement.value = ''; return; }
+                    const rowCount = parsedData.length;
+                    updateFeedback(feedbackEl, `Loaded ${fileName} (${rowCount} data rows).`, 'success');
+                    if (dataType === 'sales') { salesData = parsedData; saveSalesToLocalStorage(); needsFullUpdate = true; }
+                    else if (dataType === 'soldArticles') { soldArticlesData = parsedData; saveSoldArticlesToLocalStorage(); needsFullUpdate = true; }
+                    else if (dataType === 'inventory') { inventoryData = parsedData; saveInventoryToLocalStorage(); needsFullUpdate = true; }
+                }
                 if (needsFullUpdate) { updateAllCalculationsAndDisplays(); }
                 updateClearButtonState();
             };
@@ -169,10 +168,10 @@
         }
 
         function updateAllCalculationsAndDisplays() {
-            calculateInventoryStatus(); // Must run first to populate inventoryStatusData with Est. Prices
-            calculateAndDisplaySummary(); // Calculates all totals and updates summary UI
-            updateTransactionBreakdown();
-            displayInventoryStatusTable();
+            calculateInventoryStatus(); // Calculates inventoryStatusData
+            calculateAndDisplaySummary(); // Calculates all summary totals using potentially updated inventoryStatusData
+            updateTransactionBreakdown(); // Displays transaction details
+            displayInventoryStatusTable(); // Displays inventory table using inventoryStatusData
         }
 
         function getGroupedData() {
@@ -195,65 +194,56 @@
 
             // --- Calculate Inventory Value ---
             if (inventoryLoaded) {
-                 if (!validateColumns(inventoryData, [MB_PURCHASE_PRICE_COL, MB_QUANTITY_COL], "ManaBox Inventory", summaryErrorEl)) { /* Proceed, value=0 */ }
-                 else {
-                    // Use inventoryStatusData which has Est. Price calculated
-                    calculatedTotals.inventoryValue = inventoryStatusData.reduce((sum, item) => {
-                        const price = item['Est. Price'] || 0; const quantity = item['Quantity'] || 0;
-                        return sum + (price * quantity);
-                    }, 0);
-                 }
+                 if (inventoryStatusData.length > 0 && validateColumns(inventoryStatusData, ['Est. Price', 'Quantity'], "Inventory Status Data", summaryErrorEl)) {
+                    calculatedTotals.inventoryValue = inventoryStatusData.reduce((sum, item) => sum + ((item['Est. Price'] || 0) * (item['Quantity'] || 0)), 0);
+                 } else if (!validateColumns(inventoryData, [MB_PURCHASE_PRICE_COL, MB_QUANTITY_COL], "ManaBox Inventory", summaryErrorEl)) { /* Error shown */ }
             }
 
              // --- Calculate Sales, Fees, Shipping, Sold Value Comparison ---
             if (salesLoaded && articlesLoaded) {
-                if (!validateColumns(salesData, [CM_REF_COLUMN, CM_CATEGORY_COLUMN, CM_TYPE_COLUMN, CM_AMOUNT_COLUMN], "Cardmarket Sales", summaryErrorEl) ||
-                    !validateColumns(soldArticlesData, [SA_SHIPMENT_NR_COL, SA_ARTICLE_VALUE_COL, SA_AMOUNT_COL, SA_ARTICLE_NAME_COL], "Sold Articles", summaryErrorEl) ||
-                    !validateColumns(inventoryData, [MB_NAME_COL, MB_FOIL_COL, MB_PURCHASE_PRICE_COL], "ManaBox Inventory", summaryErrorEl) // Need inventory for est price lookup
-                    )
-                { /* Proceed, totals=0 */ }
-                else {
+                const salesColsValid = validateColumns(salesData, [CM_REF_COLUMN, CM_CATEGORY_COLUMN, CM_TYPE_COLUMN, CM_AMOUNT_COLUMN], "Cardmarket Sales", summaryErrorEl);
+                const articlesColsValid = validateColumns(soldArticlesData, [SA_SHIPMENT_NR_COL, SA_ARTICLE_VALUE_COL, SA_AMOUNT_COL, SA_ARTICLE_NAME_COL, SA_SET_NAME_COL], "Sold Articles", summaryErrorEl);
+                // *** Check internal keys needed for est price map - use composite key ***
+                const inventoryStatusColsValid = inventoryStatusData.length > 0 && validateColumns(inventoryStatusData, ['Name', 'Set', 'Est. Price', '_normalizedName', '_normalizedSet'], "Inventory Status Data", summaryErrorEl);
+
+                if (salesColsValid && articlesColsValid) {
                     const { salesAmountByRef, articleValueSumByShipment } = getGroupedData();
                     calculatedTotals.revenue = salesData.filter(t => t[CM_CATEGORY_COLUMN] === 'Sales' && t[CM_TYPE_COLUMN] === 'Sales').reduce((sum, t) => sum + parseCurrency(t[CM_AMOUNT_COLUMN]), 0);
                     calculatedTotals.fees = salesData.filter(t => t[CM_CATEGORY_COLUMN] === 'Fees' && t[CM_TYPE_COLUMN] === 'Commissions').reduce((sum, t) => sum + Math.abs(parseCurrency(t[CM_AMOUNT_COLUMN])), 0);
                     for (const ref in salesAmountByRef) { const sumOfArticles = articleValueSumByShipment[ref] || 0; const shipping = Math.max(0, (salesAmountByRef[ref] || 0) - sumOfArticles); calculatedTotals.shippingCharged += shipping; }
                     calculatedTotals.netEarnings = calculatedTotals.revenue - calculatedTotals.fees - calculatedTotals.shippingCharged;
 
-                    // *** Calculate Sold Actual vs Estimated ***
-                    // Create a map of estimated prices from inventoryStatusData
-                    const estPriceMap = {}; // Key: normalizedName -> Value: estPrice
-                     inventoryStatusData.forEach(item => {
-                         const name = normalizeString(item['Name']); // Use the same normalization as matching key
-                         // Foil is removed from key, so just map name to price. Assumes price is same for foil/non-foil in ManaBox? Or take first found? Let's take first found.
-                         if (!(name in estPriceMap)) { // Only store the first price found for a given normalized name
-                            estPriceMap[name] = item['Est. Price'] || 0;
-                         }
-                     });
+                    if (inventoryStatusColsValid) {
+                        // *** Create map using CORRECT composite key from inventoryStatusData ***
+                        const estPriceMap = {}; // Key: normalizedName|normalizedSet -> Value: estPrice
+                        inventoryStatusData.forEach(item => {
+                            const key = item['_normalizedName'] + '|' + item['_normalizedSet'];
+                            if (!(key in estPriceMap)) { estPriceMap[key] = item['Est. Price'] || 0; }
+                        });
 
-                    soldArticlesData.forEach(a => {
-                        const name = normalizeString(a[SA_ARTICLE_NAME_COL]); // Use same normalization
-                        const quantity = parseInt(a[SA_AMOUNT_COL] || '1', 10);
-                        const articleValue = parseCurrency(a[SA_ARTICLE_VALUE_COL]);
-                        const estPrice = estPriceMap[name] || 0; // Look up est price by name
+                        calculatedTotals.soldActualValue = 0;
+                        calculatedTotals.soldEstimatedValue = 0;
+                        soldArticlesData.forEach(a => {
+                            const name = normalizeString(a[SA_ARTICLE_NAME_COL]);
+                            const set = normalizeString(a[SA_SET_NAME_COL] || '');
+                            const key = name + '|' + set; // Composite key for lookup
+                            const quantity = parseInt(a[SA_AMOUNT_COL] || '1', 10);
+                            const articleValue = parseCurrency(a[SA_ARTICLE_VALUE_COL]);
+                            const estPrice = estPriceMap[key] || 0; // Look up using composite key
 
-                        calculatedTotals.soldActualValue += (articleValue * quantity);
-                        calculatedTotals.soldEstimatedValue += (estPrice * quantity);
-                    });
+                            calculatedTotals.soldActualValue += (articleValue * quantity);
+                            calculatedTotals.soldEstimatedValue += (estPrice * quantity);
+                        });
+                    } else {
+                         console.warn("Cannot calculate Sold Estimated Value accurately due to missing/invalid inventory status data.");
+                    }
                 }
             }
 
-            // --- Update DOM ---
-            totalRevenueEl.textContent = formatCurrency(calculatedTotals.revenue);
-            totalFeesEl.textContent = formatCurrency(calculatedTotals.fees);
-            totalShippingEl.textContent = formatCurrency(calculatedTotals.shippingCharged);
-            netEarningsEl.textContent = formatCurrency(calculatedTotals.netEarnings);
-            totalInventoryValueEl.textContent = formatCurrency(calculatedTotals.inventoryValue);
+            totalRevenueEl.textContent = formatCurrency(calculatedTotals.revenue); totalFeesEl.textContent = formatCurrency(calculatedTotals.fees); totalShippingEl.textContent = formatCurrency(calculatedTotals.shippingCharged); netEarningsEl.textContent = formatCurrency(calculatedTotals.netEarnings); totalInventoryValueEl.textContent = formatCurrency(calculatedTotals.inventoryValue);
             const percentageEarned = calculatedTotals.inventoryValue > 0 ? (calculatedTotals.revenue / calculatedTotals.inventoryValue) * 100 : 0;
-            percentageEarnedEl.textContent = `(${percentageEarned.toFixed(1)}% Earned vs Revenue)`; // Clarified label
-
-            // Update new summary box
-            soldActualValueEl.textContent = `${formatCurrency(calculatedTotals.soldActualValue)} (Actual)`;
-            soldEstimatedValueEl.textContent = `vs ${formatCurrency(calculatedTotals.soldEstimatedValue)} (Est.)`;
+            percentageEarnedEl.textContent = `(${percentageEarned.toFixed(1)}% Earned vs Revenue)`;
+            soldActualValueEl.textContent = `${formatCurrency(calculatedTotals.soldActualValue)} (Actual)`; soldEstimatedValueEl.textContent = `vs ${formatCurrency(calculatedTotals.soldEstimatedValue)} (Est.)`;
             const soldPercentageReached = calculatedTotals.soldEstimatedValue > 0 ? (calculatedTotals.soldActualValue / calculatedTotals.soldEstimatedValue) * 100 : 0;
             soldPercentageReachedEl.textContent = `(${soldPercentageReached.toFixed(1)}% of Est. Reached)`;
 
@@ -266,8 +256,7 @@
         function validateColumns(data, requiredCols, csvName, errorElement) {
              if (!data || data.length === 0) return true; const firstRow = data[0]; const missingCols = requiredCols.filter(col => !(col in firstRow));
              if (missingCols.length > 0) { const errorMsg = `Required columns missing in ${csvName} CSV: ${missingCols.join(', ')}. Calculations may be inaccurate.`; console.error("Validation Error:", errorMsg); if (errorElement) { errorElement.textContent = errorMsg; errorElement.classList.remove('hidden'); } return false; }
-             // Only hide error if validation passes *and* an error element was provided
-             if (errorElement) errorElement.classList.add('hidden');
+             if (errorElement && !errorElement.classList.contains('hidden') ) { errorElement.classList.add('hidden'); }
              return true;
         }
 
@@ -296,7 +285,7 @@
             transactionBreakdownContainer.classList.remove('hidden'); transactionBreakdownPlaceholder.classList.add('hidden');
         }
 
-        /** Calculates derived inventory status data, including average sold price */
+        /** Calculates derived inventory status data using composite key (name|set) and distributes sold counts */
         function calculateInventoryStatus() {
             inventoryStatusError.classList.add('hidden'); inventoryStatusError.textContent = '';
             inventoryStatusData = [];
@@ -305,22 +294,22 @@
 
             if (!inventoryLoaded) return;
 
-             // *** Added MB_SET_CODE_COL and MB_LANGUAGE_COL to validation ***
-            if (!validateColumns(inventoryData, [MB_NAME_COL, MB_SET_NAME_COL, MB_SET_CODE_COL, MB_QUANTITY_COL, MB_FOIL_COL, MB_PURCHASE_PRICE_COL, MB_LANGUAGE_COL], "ManaBox Inventory", inventoryStatusError)) return;
-            // *** Added SA_ARTICLE_VALUE_COL validation ***
-            if (articlesLoaded && !validateColumns(soldArticlesData, [SA_ARTICLE_NAME_COL, SA_SET_NAME_COL, SA_SHIPMENT_NR_COL, SA_AMOUNT_COL, SA_ARTICLE_VALUE_COL], "Sold Articles", inventoryStatusError)) { /* Proceed, sold data might be incomplete */ }
+            // Validate required columns for inventory
+            // *** Added MB_COLLECTOR_NR_COL validation ***
+            if (!validateColumns(inventoryData, [MB_NAME_COL, MB_SET_NAME_COL, MB_SET_CODE_COL, MB_COLLECTOR_NR_COL, MB_QUANTITY_COL, MB_FOIL_COL, MB_PURCHASE_PRICE_COL, MB_LANGUAGE_COL], "ManaBox Inventory", inventoryStatusError)) return;
+            // Validate required columns for sold articles if loaded
+            if (articlesLoaded && !validateColumns(soldArticlesData, [SA_ARTICLE_NAME_COL, SA_SET_NAME_COL, SA_AMOUNT_COL, SA_ARTICLE_VALUE_COL], "Sold Articles", inventoryStatusError)) { /* Proceed, sold data might be incomplete */ }
 
-            // Calculate Sold Stats (Count and Total Value) based on FULL NAME matching
-            const soldStats = {}; // Key: name -> Value: { count: number, totalValue: number }
+            // Calculate Sold Stats using composite key: normalizedName|normalizedSet
+            const soldStats = {}; // Key: name|set -> Value: { count: number, totalValue: number }
             if (articlesLoaded) {
                 soldArticlesData.forEach(article => {
                     // *** Use full normalized name for matching key ***
                     const name = normalizeString(article[SA_ARTICLE_NAME_COL]);
-                    // Foil status is no longer part of the key
+                    const set = normalizeString(article[SA_SET_NAME_COL] || '');
                     const quantity = parseInt(article[SA_AMOUNT_COL] || '1', 10);
                     const articleValue = parseCurrency(article[SA_ARTICLE_VALUE_COL]);
-                    // *** Key: Name only ***
-                    const key = name;
+                    const key = `${name}|${set}`; // Composite Key
 
                     if (!soldStats[key]) soldStats[key] = { count: 0, totalValue: 0 };
                     soldStats[key].count += quantity;
@@ -328,33 +317,51 @@
                 });
             }
 
+            // *** Keep track of allocated sold counts during inventory mapping ***
+            const allocatedSoldCounts = {}; // Key: name|set -> Value: count allocated so far
+
+            // Map inventory data using the same composite key and allocate sold counts
             inventoryStatusData = inventoryData.map(item => {
-                 // *** Use full normalized name for matching key ***
                 const name = normalizeString(item[MB_NAME_COL]);
-                 // *** Key: Name only ***
-                const key = name;
+                const set = normalizeString(item[MB_SET_NAME_COL] || '');
+                const key = `${name}|${set}`; // Composite Key
 
                 const stats = soldStats[key] || { count: 0, totalValue: 0 };
-                const originalQuantity = parseInt(item[MB_QUANTITY_COL] || '0', 10);
-                const quantitySold = stats.count;
-                const quantityAvailable = Math.max(0, originalQuantity - quantitySold);
-                const estPrice = parseCurrency(item[MB_PURCHASE_PRICE_COL]);
-                const averageSoldPrice = quantitySold > 0 ? stats.totalValue / quantitySold : 0;
+                const totalSoldForKey = stats.count; // Total sold for this name/set combo
+                const alreadyAllocated = allocatedSoldCounts[key] || 0;
 
-                // Return object with keys matching NEW display headers
+                const originalQuantity = parseInt(item[MB_QUANTITY_COL] || '0', 10);
+
+                // *** Calculate quantity sold FROM THIS LINE using distributed allocation ***
+                const remainingNeeded = totalSoldForKey - alreadyAllocated;
+                const quantitySoldThisLine = Math.min(originalQuantity, Math.max(0, remainingNeeded));
+
+                // *** Update allocated count for the next line with the same key ***
+                allocatedSoldCounts[key] = alreadyAllocated + quantitySoldThisLine;
+
+                const quantityAvailable = originalQuantity - quantitySoldThisLine;
+                const estPrice = parseCurrency(item[MB_PURCHASE_PRICE_COL]);
+                // Average sold price remains the same for all items matching the key
+                const averageSoldPrice = totalSoldForKey > 0 ? stats.totalValue / totalSoldForKey : 0;
+
+                // Return object with keys matching display headers
                 return {
                     'Name': item[MB_NAME_COL],
                     'Set': item[MB_SET_CODE_COL], // Use Set Code
-                    'Foil': item[MB_FOIL_COL], // Keep original value for icon logic
-                    'Lang': item[MB_LANGUAGE_COL], // Add Language
-                    'Est. Price': estPrice, // Renamed
-                    'Sold Price': averageSoldPrice, // New
-                    'Quantity': originalQuantity, // Renamed
-                    'Sold': quantitySold, // Renamed
-                    'Available': quantityAvailable // Renamed
+                    'Collector #': item[MB_COLLECTOR_NR_COL], // *** Add Collector Number ***
+                    'Foil': item[MB_FOIL_COL],
+                    'Lang': item[MB_LANGUAGE_COL],
+                    'Est. Price': estPrice,
+                    'Sold Price': averageSoldPrice,
+                    'Quantity': originalQuantity,
+                    'Sold': quantitySoldThisLine, // Use quantity sold from this specific line
+                    'Available': quantityAvailable,
+                    // Internal keys for consistent lookup if needed later
+                    '_normalizedName': name,
+                    '_normalizedSet': set
                 };
             });
-             console.log("Calculated Inventory Status:", inventoryStatusData.length);
+             // console.log("Calculated Inventory Status:", inventoryStatusData.length);
         }
 
 
@@ -378,25 +385,33 @@
 
             const sortKey = currentInventorySort.key;
             const sortDir = currentInventorySort.direction;
-            // *** Updated sortableCols with new/renamed keys ***
-            const sortableCols = { 'Name': 'string', 'Set': 'string', 'Lang': 'string', 'Est. Price': 'number', 'Sold Price': 'number', 'Quantity': 'number', 'Sold': 'number', 'Available': 'number' };
+            // *** Updated sortableCols with Collector # ***
+            const sortableCols = { 'Name': 'string', 'Set': 'string', 'Collector #': 'string', 'Lang': 'string', 'Est. Price': 'number', 'Sold Price': 'number', 'Quantity': 'number', 'Sold': 'number', 'Available': 'number' };
 
             const sortedData = [...filteredData].sort((a, b) => {
                 const valA = a[sortKey]; const valB = b[sortKey];
                 const sortType = sortableCols[sortKey] || 'string';
                 let comparison = 0;
-                if (sortType === 'number') { comparison = (Number(valA) || 0) - (Number(valB) || 0); }
+                // Special sort for collector number
+                if (sortKey === 'Collector #') {
+                    const numA = parseInt(valA, 10); const numB = parseInt(valB, 10);
+                    if (!isNaN(numA) && !isNaN(numB)) { comparison = numA - numB; }
+                    else { comparison = String(valA || '').localeCompare(String(valB || '')); } // Fallback
+                } else if (sortType === 'number') { comparison = (Number(valA) || 0) - (Number(valB) || 0); }
                 else { comparison = String(valA || '').localeCompare(String(valB || '')); }
                 return sortDir === 'asc' ? comparison : -comparison;
             });
 
             inventoryStatusTableBody.innerHTML = ''; inventoryStatusTableHead.innerHTML = '';
             // *** Updated displayHeaders ***
-            const displayHeaders = ['Name', 'Set', 'Foil', 'Lang', 'Est. Price', 'Sold Price', 'Quantity', 'Sold', 'Available'];
+            const displayHeaders = ['Name', 'Set', 'Collector #', 'Foil', 'Lang', 'Est. Price', 'Sold Price', 'Quantity', 'Sold', 'Available'];
             const headerRow = document.createElement('tr');
             displayHeaders.forEach(headerText => {
                 const th = document.createElement('th');
-                th.scope = 'col'; th.className = 'px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap'; th.textContent = headerText;
+                th.scope = 'col';
+                const isNumeric = ['Est. Price', 'Sold Price', 'Quantity', 'Sold', 'Available', 'Collector #'].includes(headerText); // Align Collector # right
+                th.className = `px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap ${isNumeric ? 'number-header' : ''}`;
+                th.textContent = headerText;
                 if (sortableCols[headerText]) {
                     th.dataset.sortKey = headerText; th.style.cursor = 'pointer';
                     const arrowSpan = document.createElement('span'); arrowSpan.className = 'sort-arrow';
@@ -413,17 +428,14 @@
                 sortedData.forEach((item) => {
                     const row = document.createElement('tr'); row.className = 'hover:bg-slate-50 transition-colors duration-150 ease-in-out';
                     displayHeaders.forEach(header => {
-                        const cell = document.createElement('td'); cell.className = 'px-4 py-2 whitespace-nowrap text-sm text-slate-700';
+                        const cell = document.createElement('td');
+                        const isNumeric = ['Est. Price', 'Sold Price', 'Quantity', 'Sold', 'Available', 'Collector #'].includes(header);
+                        cell.className = `px-4 py-2 whitespace-nowrap text-sm text-slate-700 ${isNumeric ? 'number-cell' : ''}`;
                         let cellValue = item.hasOwnProperty(header) ? item[header] : '';
-
-                        // *** Updated formatting logic for new/renamed columns ***
                         if (header === 'Available') { cell.innerHTML = `<span class="${cellValue > 0 ? 'status-available' : 'status-soldout'}">${cellValue}</span>`; }
                         else if (header === 'Est. Price' || header === 'Sold Price') { cell.textContent = formatCurrency(cellValue); }
-                        else if (header === 'Foil') { // *** Display Foil Icon ***
-                             cell.innerHTML = normalizeString(cellValue) === 'foil' ? '⭐' : '';
-                             cell.classList.add('foil-cell'); // Add class for centering
-                        }
-                        else { cell.textContent = formatCell(cellValue); } // Handles Name, Set, Lang, Quantity, Sold
+                        else if (header === 'Foil') { cell.innerHTML = normalizeString(cellValue) === 'foil' ? '⭐' : ''; cell.classList.add('foil-cell'); }
+                        else { cell.textContent = formatCell(cellValue); }
                         row.appendChild(cell);
                     }); inventoryStatusTableBody.appendChild(row);
                 });
@@ -432,30 +444,28 @@
             inventoryStatusPlaceholder.classList.add('hidden');
         }
 
-        function handleInventorySortClick(event) {
-            const targetTh = event.currentTarget; const newSortKey = targetTh.dataset.sortKey; if (!newSortKey) return;
-            if (newSortKey === currentInventorySort.key) { currentInventorySort.direction = currentInventorySort.direction === 'asc' ? 'desc' : 'asc'; }
-            else { currentInventorySort.key = newSortKey; currentInventorySort.direction = 'asc'; }
-            displayInventoryStatusTable();
-        }
+        function handleInventorySortClick(event) { const targetTh = event.currentTarget; const newSortKey = targetTh.dataset.sortKey; if (!newSortKey) return; if (newSortKey === currentInventorySort.key) { currentInventorySort.direction = currentInventorySort.direction === 'asc' ? 'desc' : 'asc'; } else { currentInventorySort.key = newSortKey; currentInventorySort.direction = 'asc'; } displayInventoryStatusTable(); }
         function handleInventoryFilterInput(event) { currentInventoryFilter.name = event.target.value; displayInventoryStatusTable(); }
-        function updateClearButtonState() { const hasData = (salesData && salesData.length > 0) || (soldArticlesData && soldArticlesData.length > 0) || (inventoryData && inventoryData.length > 0); clearDataButton.disabled = !hasData; clearDataFeedbackEl.textContent = hasData ? 'Clears all stored data from this browser.' : 'No data stored.'; }
+        function updateClearButtonState() { const hasData = (salesData && salesData.length > 0) || (soldArticlesData && soldArticlesData.length > 0) || (inventoryData && inventoryData.length > 0) || (productCatalogData); clearDataButton.disabled = !hasData; clearDataFeedbackEl.textContent = hasData ? 'Clears all stored data from this browser.' : 'No data stored.'; }
 
         // --- Local Storage Functions ---
-        function saveSalesToLocalStorage() { try { localStorage.setItem(SALES_DATA_STORAGE_KEY, JSON.stringify(salesData)); console.log('Sales data saved.'); } catch (e) { console.error('Failed to save sales data:', e); alert('Could not save sales data.'); } }
-        function loadSalesFromLocalStorage() { const d=localStorage.getItem(SALES_DATA_STORAGE_KEY); if(d){try{const p=JSON.parse(d);if(Array.isArray(p)){salesData=p;console.log(`Loaded ${p.length} sales records.`);return true;}}catch(e){console.error('Failed to parse sales data:',e);localStorage.removeItem(SALES_DATA_STORAGE_KEY);}} return false; }
-        function saveSoldArticlesToLocalStorage() { try { localStorage.setItem(SOLD_ARTICLES_STORAGE_KEY, JSON.stringify(soldArticlesData)); console.log('Sold articles data saved.'); } catch (e) { console.error('Failed to save sold articles data:', e); alert('Could not save sold articles data.'); } }
-        function loadSoldArticlesFromLocalStorage() { const d=localStorage.getItem(SOLD_ARTICLES_STORAGE_KEY); if(d){try{const p=JSON.parse(d);if(Array.isArray(p)){soldArticlesData=p;console.log(`Loaded ${p.length} sold article records.`);return true;}}catch(e){console.error('Failed to parse sold articles data:',e);localStorage.removeItem(SOLD_ARTICLES_STORAGE_KEY);}} return false; }
-        function saveInventoryToLocalStorage() { try { localStorage.setItem(INVENTORY_DATA_STORAGE_KEY, JSON.stringify(inventoryData)); console.log('Inventory data saved.'); } catch (e) { console.error('Failed to save inventory data:', e); } }
-        function loadInventoryFromLocalStorage() { const d=localStorage.getItem(INVENTORY_DATA_STORAGE_KEY); if(d){try{const p=JSON.parse(d);if(Array.isArray(p)){inventoryData=p;console.log(`Loaded ${p.length} inventory records.`);return true;}}catch(e){console.error('Failed to parse inventory data:',e);localStorage.removeItem(INVENTORY_DATA_STORAGE_KEY);}} return false; }
+        function saveSalesToLocalStorage() { try { localStorage.setItem(SALES_DATA_STORAGE_KEY, JSON.stringify(salesData)); } catch (e) { console.error('Failed to save sales data:', e); } }
+        function loadSalesFromLocalStorage() { const d=localStorage.getItem(SALES_DATA_STORAGE_KEY); if(d){try{const p=JSON.parse(d);if(Array.isArray(p)){salesData=p;return true;}}catch(e){console.error('Failed to parse sales data:',e);localStorage.removeItem(SALES_DATA_STORAGE_KEY);}} return false; }
+        function saveSoldArticlesToLocalStorage() { try { localStorage.setItem(SOLD_ARTICLES_STORAGE_KEY, JSON.stringify(soldArticlesData)); } catch (e) { console.error('Failed to save sold articles data:', e); } }
+        function loadSoldArticlesFromLocalStorage() { const d=localStorage.getItem(SOLD_ARTICLES_STORAGE_KEY); if(d){try{const p=JSON.parse(d);if(Array.isArray(p)){soldArticlesData=p;return true;}}catch(e){console.error('Failed to parse sold articles data:',e);localStorage.removeItem(SOLD_ARTICLES_STORAGE_KEY);}} return false; }
+        function saveInventoryToLocalStorage() { try { localStorage.setItem(INVENTORY_DATA_STORAGE_KEY, JSON.stringify(inventoryData)); } catch (e) { console.error('Failed to save inventory data:', e); } }
+        function loadInventoryFromLocalStorage() { const d=localStorage.getItem(INVENTORY_DATA_STORAGE_KEY); if(d){try{const p=JSON.parse(d);if(Array.isArray(p)){inventoryData=p;return true;}}catch(e){console.error('Failed to parse inventory data:',e);localStorage.removeItem(INVENTORY_DATA_STORAGE_KEY);}} return false; }
+        function saveProductCatalogToLocalStorage() { try { localStorage.setItem(PRODUCT_CATALOG_STORAGE_KEY, JSON.stringify(productCatalogData)); } catch (e) { console.error('Failed to save product catalog data:', e); } }
+        function loadProductCatalogFromLocalStorage() { const d=localStorage.getItem(PRODUCT_CATALOG_STORAGE_KEY); if(d){try{const p=JSON.parse(d);if(p){productCatalogData=p;console.log(`Loaded product catalog.`);return true;}}catch(e){console.error('Failed to parse product catalog data:',e);localStorage.removeItem(PRODUCT_CATALOG_STORAGE_KEY);}} return false; }
 
         /** Clears ALL data */
         function clearAllData() {
-            if (confirm('Are you sure you want to clear ALL stored data (Sales, Sold Articles, Inventory)? This cannot be undone.')) {
-                salesData = []; soldArticlesData = []; inventoryData = []; inventoryStatusData = []; calculatedTotals = { revenue: 0, fees: 0, shippingCharged: 0, netEarnings: 0, inventoryValue: 0, soldActualValue: 0, soldEstimatedValue: 0 }; // Reset all totals
-                localStorage.removeItem(SALES_DATA_STORAGE_KEY); localStorage.removeItem(SOLD_ARTICLES_STORAGE_KEY); localStorage.removeItem(INVENTORY_DATA_STORAGE_KEY);
-                cardmarketInput.value = ''; soldArticlesInput.value = ''; manaboxInput.value = '';
-                updateFeedback(cardmarketFeedbackEl, '', 'info'); updateFeedback(soldArticlesFeedbackEl, '', 'info'); updateFeedback(manaboxFeedbackEl, '', 'info');
+            if (confirm('Are you sure you want to clear ALL stored data (Sales, Sold Articles, Inventory, Product Catalog)? This cannot be undone.')) {
+                salesData = []; soldArticlesData = []; inventoryData = []; inventoryStatusData = []; productCatalogData = null;
+                calculatedTotals = { revenue: 0, fees: 0, shippingCharged: 0, netEarnings: 0, inventoryValue: 0, soldActualValue: 0, soldEstimatedValue: 0 };
+                localStorage.removeItem(SALES_DATA_STORAGE_KEY); localStorage.removeItem(SOLD_ARTICLES_STORAGE_KEY); localStorage.removeItem(INVENTORY_DATA_STORAGE_KEY); localStorage.removeItem(PRODUCT_CATALOG_STORAGE_KEY);
+                cardmarketInput.value = ''; soldArticlesInput.value = ''; manaboxInput.value = ''; productCatalogInput.value = '';
+                updateFeedback(cardmarketFeedbackEl, '', 'info'); updateFeedback(soldArticlesFeedbackEl, '', 'info'); updateFeedback(manaboxFeedbackEl, '', 'info'); updateFeedback(productCatalogFeedbackEl, '', 'info');
                 inventoryFilterNameInput.value = ''; currentInventoryFilter.name = ''; currentInventorySort = { key: 'Name', direction: 'asc' };
                 updateAllCalculationsAndDisplays(); updateClearButtonState();
                 alert('All stored data cleared.'); console.log('All data cleared.');
@@ -467,8 +477,14 @@
 
         // --- Initialization ---
         function initialize() {
-            cardmarketInput.addEventListener('change', (e) => handleFileUpload(e, ';', 'sales', cardmarketFeedbackEl)); soldArticlesInput.addEventListener('change', (e) => handleFileUpload(e, ';', 'soldArticles', soldArticlesFeedbackEl)); manaboxInput.addEventListener('change', (e) => handleFileUpload(e, ',', 'inventory', manaboxFeedbackEl)); clearDataButton.addEventListener('click', clearAllData); tabButtonsContainer.addEventListener('click', switchTab); inventoryFilterNameInput.addEventListener('input', handleInventoryFilterInput);
-            loadSalesFromLocalStorage(); loadSoldArticlesFromLocalStorage(); loadInventoryFromLocalStorage();
+            cardmarketInput.addEventListener('change', (e) => handleFileUpload(e, ';', 'sales', cardmarketFeedbackEl));
+            soldArticlesInput.addEventListener('change', (e) => handleFileUpload(e, ';', 'soldArticles', soldArticlesFeedbackEl));
+            manaboxInput.addEventListener('change', (e) => handleFileUpload(e, ',', 'inventory', manaboxFeedbackEl));
+            productCatalogInput.addEventListener('change', (e) => handleFileUpload(e, '', 'catalog', productCatalogFeedbackEl));
+            clearDataButton.addEventListener('click', clearAllData);
+            tabButtonsContainer.addEventListener('click', switchTab);
+            inventoryFilterNameInput.addEventListener('input', handleInventoryFilterInput);
+            loadSalesFromLocalStorage(); loadSoldArticlesFromLocalStorage(); loadInventoryFromLocalStorage(); loadProductCatalogFromLocalStorage();
             updateAllCalculationsAndDisplays(); updateClearButtonState();
             console.log('Sales Tracker Initialized.');
         }
