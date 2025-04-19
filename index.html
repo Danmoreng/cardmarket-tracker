@@ -11,29 +11,47 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #94a3b8; border-radius: 4px; border: 2px solid #f1f5f9; }
         .custom-scrollbar { scrollbar-width: thin; scrollbar-color: #94a3b8 #f1f5f9; }
+
+        /* General Button Styles */
         button:disabled { opacity: 0.5; cursor: not-allowed; }
-        input[type="file"]::-webkit-file-upload-button { color: #1e40af; background-color: #e0f2fe; padding: 0.5rem 1rem; border-radius: 0.375rem; border: 0; font-size: 0.875rem; font-weight: 600; margin-right: 1rem; cursor: pointer; }
+
+        /* File Input Button Styling */
+        input[type="file"]::-webkit-file-upload-button { color: #1e40af; background-color: #e0f2fe; padding: 0.5rem 1rem; border-radius: 0.375rem; border: 0; font-size: 0.875rem; font-weight: 600; margin-right: 1rem; cursor: pointer; transition: background-color 0.2s ease; }
         input[type="file"]:hover::-webkit-file-upload-button { background-color: #dbeafe; }
-        input[type="file"]::file-selector-button { color: #1e40af; background-color: #e0f2fe; padding: 0.5rem 1rem; border-radius: 0.375rem; border: 0; font-size: 0.875rem; font-weight: 600; margin-right: 1rem; cursor: pointer; }
+        input[type="file"]::file-selector-button { color: #1e40af; background-color: #e0f2fe; padding: 0.5rem 1rem; border-radius: 0.375rem; border: 0; font-size: 0.875rem; font-weight: 600; margin-right: 1rem; cursor: pointer; transition: background-color 0.2s ease; }
         input[type="file"]:hover::file-selector-button { background-color: #dbeafe; }
-        .transaction-card { border: 1px solid #e2e8f0; border-radius: 0.5rem; padding: 1rem; margin-bottom: 1rem; background-color: #ffffff; box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); }
-        .status-available { color: #16a34a; font-weight: 600; }
-        .status-soldout { color: #dc2626; font-weight: 600; }
+
+        /* Modal Styles */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-content { background-color: white; padding: 1.5rem 2rem 2rem 2rem; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); width: 90%; max-width: 700px; /* Wider modal for table */ position: relative; max-height: 80vh; display: flex; flex-direction: column; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.75rem;}
+        .modal-body { overflow-y: auto; /* Enable scroll for long lists */ flex-grow: 1; }
+        .modal-close-button { background: none; border: none; font-size: 1.75rem; line-height: 1; cursor: pointer; color: #64748b; padding: 0; }
+        .modal-close-button:hover { color: #1e293b; }
+
         /* Tab Styles */
         .tab-button { padding: 0.5rem 1rem; margin-right: 0.5rem; border-radius: 0.375rem 0.375rem 0 0; border: 1px solid transparent; border-bottom: none; cursor: pointer; background-color: #e2e8f0; color: #475569; transition: background-color 0.2s ease, color 0.2s ease; }
         .tab-button.active { background-color: #ffffff; border-color: #e2e8f0; color: #1e293b; font-weight: 600; }
         .tab-content { display: none; padding: 1.5rem; border: 1px solid #e2e8f0; border-radius: 0 0.5rem 0.5rem 0.5rem; background-color: #ffffff; }
         .tab-content.active { display: block; }
+
         /* Sortable Table Header Styles */
         th[data-sort-key] { cursor: pointer; user-select: none; position: relative; padding-right: 1.5rem; }
         th[data-sort-key]:hover { background-color: #f1f5f9; }
         th .sort-arrow { position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); font-size: 0.7em; color: #94a3b8; }
         th .sort-arrow.asc::after { content: '▲'; }
         th .sort-arrow.desc::after { content: '▼'; }
-        /* Center align foil icon */
-        td.foil-cell { text-align: center; }
-        /* Right align numeric columns */
+
+        /* Table Cell Alignment & Clickable ID*/
         td.number-cell, th.number-header { text-align: right; }
+        td.center-cell, th.center-header { text-align: center; }
+        .clickable-id { cursor: pointer; color: #2563eb; text-decoration: underline; }
+        .clickable-id:hover { color: #1d4ed8; }
+
+
+        /* Utility */
+        .hidden { display: none; }
 
     </style>
 </head>
@@ -42,45 +60,56 @@
     <div class="container mx-auto p-4 md:p-6 lg:p-8">
         <header class="mb-8 text-center">
             <h1 class="text-3xl md:text-4xl font-bold text-slate-800">Magic Card Sales Tracker</h1>
-            <p class="text-slate-600 mt-1">Upload CSVs (and optionally a product catalog JSON) to analyze sales and track inventory.</p>
+            <p class="text-slate-600 mt-1">Upload Cardmarket CSVs to analyze sales.</p>
         </header>
 
         <main>
-            <section class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-                 <div class="p-4 border border-slate-300 rounded-lg shadow-sm bg-white"> <label for="cardmarket-csv" class="block text-sm font-medium text-slate-700 mb-2">1. Sales CSV</label> <input id="cardmarket-csv" type="file" accept=".csv" class="block w-full text-sm text-slate-600 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"> <div id="cardmarket-feedback" class="text-xs mt-1"></div> </div>
-                 <div class="p-4 border border-slate-300 rounded-lg shadow-sm bg-white"> <label for="sold-articles-csv" class="block text-sm font-medium text-slate-700 mb-2">2. Sold Articles CSV</label> <input id="sold-articles-csv" type="file" accept=".csv" class="block w-full text-sm text-slate-600 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"> <div id="sold-articles-feedback" class="text-xs mt-1"></div> </div>
-                 <div class="p-4 border border-slate-300 rounded-lg shadow-sm bg-white"> <label for="manabox-csv" class="block text-sm font-medium text-slate-700 mb-2">3. Inventory CSV</label> <input id="manabox-csv" type="file" accept=".csv" class="block w-full text-sm text-slate-600 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"> <div id="manabox-feedback" class="text-xs mt-1"></div> </div>
-                 <div class="p-4 border border-slate-300 rounded-lg shadow-sm bg-white"> <label for="product-catalog-json" class="block text-sm font-medium text-slate-700 mb-2">4. Product Catalog JSON (Opt.)</label> <input id="product-catalog-json" type="file" accept=".json,application/json" class="block w-full text-sm text-slate-600 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"> <div id="product-catalog-feedback" class="text-xs mt-1"></div> </div>
-            </section>
-
-            <section class="mb-6 text-center md:text-right">
-                <button id="clear-data-button" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-150 ease-in-out text-sm font-medium shadow-sm"> Clear All Stored Data </button>
-                <p id="clear-data-feedback" class="text-xs text-slate-500 mt-1 md:inline-block md:ml-2"></p>
+            <section class="mb-6 flex flex-col sm:flex-row justify-center sm:justify-between items-center gap-4">
+                 <button id="open-upload-modal-button" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-150 ease-in-out text-sm font-medium shadow-sm"> Upload Sales Data </button>
+                 <div>
+                    <button id="clear-data-button" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-150 ease-in-out text-sm font-medium shadow-sm"> Clear Stored Data </button>
+                    <p id="clear-data-feedback" class="text-xs text-slate-500 mt-1 text-center sm:text-right"></p>
+                 </div>
             </section>
 
             <section id="sales-summary-section" class="p-4 md:p-6 border border-slate-300 rounded-lg shadow-sm bg-white mb-6">
                 <h2 class="text-xl font-semibold mb-4 text-slate-800">Summary</h2>
                 <div id="summary-error" class="hidden mb-4 p-3 bg-red-100 border border-red-300 text-red-800 rounded-md text-sm"></div>
-                <div id="summary-content" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div id="summary-content" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div class="p-3 bg-green-100 rounded-md border border-green-200"> <p class="text-sm text-green-800 font-medium">Total Revenue</p> <p id="total-revenue" class="text-lg font-bold text-green-900">€0.00</p> <p class="text-xs text-green-700 mt-1">(CM Sales)</p> </div>
-                    <div class="p-3 bg-red-100 rounded-md border border-red-200"> <p class="text-sm text-red-800 font-medium">Cardmarket Fees</p> <p id="total-fees" class="text-lg font-bold text-red-900">€0.00</p> <p class="text-xs text-red-700 mt-1">(CM Sales)</p> </div>
+                    <div class="p-3 bg-red-100 rounded-md border border-red-200"> <p class="text-sm text-red-800 font-medium">Cardmarket Fees</p> <p id="total-fees" class="text-lg font-bold text-red-900">€0.00</p> <p class="text-xs text-red-700 mt-1">(CM Commissions)</p> </div>
                     <div class="p-3 bg-yellow-100 rounded-md border border-yellow-200"> <p class="text-sm text-yellow-800 font-medium">Shipping Charged</p> <p id="total-shipping" class="text-lg font-bold text-yellow-900">€0.00</p> <p class="text-xs text-yellow-700 mt-1">(Revenue - Item Val)</p> </div>
-                    <div class="p-3 bg-blue-100 rounded-md border border-blue-200"> <p class="text-sm text-blue-800 font-medium">Net Earnings</p> <p id="net-earnings" class="text-lg font-bold text-blue-900">€0.00</p> <p class="text-xs text-blue-700 mt-1">(Rev - Fees - Ship)</p> </div>
-                     <div class="p-3 bg-purple-100 rounded-md border border-purple-200"> <p class="text-sm text-purple-800 font-medium">Inventory Value</p> <p id="total-inventory-value" class="text-lg font-bold text-purple-900">€0.00</p> <p id="percentage-earned" class="text-xs text-purple-700 mt-1">(0% Earned vs Revenue)</p> </div>
-                     <div class="p-3 bg-indigo-100 rounded-md border border-indigo-200"> <p class="text-sm text-indigo-800 font-medium">Sold Value vs Est.</p> <p id="sold-actual-value" class="text-base font-bold text-indigo-900">€0.00 <span class="text-xs font-normal">(Actual)</span></p> <p id="sold-estimated-value" class="text-sm font-medium text-indigo-700">vs €0.00 <span class="text-xs font-normal">(Est.)</span></p> <p id="sold-percentage-reached" class="text-xs text-indigo-700 mt-1">(0% of Est. Reached)</p> </div>
+                    <div class="p-3 bg-blue-100 rounded-md border border-blue-200"> <p class="text-sm text-blue-800 font-medium">Net Earnings</p> <p id="net-earnings" class="text-lg font-bold text-blue-900">€0.00</p> <p class="text-xs text-blue-700 mt-1">(Item Value - Fees)</p> </div>
                 </div>
-                 <div id="summary-placeholder" class="text-slate-500">Upload CSVs to see the summary.</div>
+                 <div id="summary-placeholder" class="text-slate-500">Upload CSVs via the button above to see the summary.</div>
             </section>
 
             <section class="mb-6">
-                <div id="tab-buttons" class="border-b border-slate-200"> <button class="tab-button active" data-tab="tab-breakdown">Transaction Breakdown</button> <button class="tab-button" data-tab="tab-inventory">Inventory Status</button> </div>
-                <div id="tab-content">
-                    <div id="tab-breakdown" class="tab-content active"> <div id="transaction-breakdown-error" class="hidden mb-4 p-3 bg-red-100 border border-red-300 text-red-800 rounded-md text-sm"></div> <div id="transaction-breakdown-container"></div> <div id="transaction-breakdown-placeholder" class="text-slate-500 py-4"> Upload Cardmarket Sales CSV and Sold Articles CSV to see the transaction breakdown. </div> </div>
-                    <div id="tab-inventory" class="tab-content">
-                        <div class="mb-4"> <label for="inventory-filter-name" class="block text-sm font-medium text-slate-700 mb-1">Filter by Name:</label> <input type="text" id="inventory-filter-name" placeholder="Enter card name..." class="w-full md:w-1/3 p-2 border border-slate-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"> </div>
-                        <div id="inventory-status-error" class="hidden mb-4 p-3 bg-red-100 border border-red-300 text-red-800 rounded-md text-sm"></div>
-                        <div id="inventory-status-table-container" class="overflow-x-auto custom-scrollbar"> <table class="min-w-full divide-y divide-slate-200 border border-slate-200"> <thead id="inventory-status-table-head" class="bg-slate-50"></thead> <tbody id="inventory-status-table-body" class="bg-white divide-y divide-slate-200"></tbody> </table> </div>
-                        <div id="inventory-status-placeholder" class="text-slate-500 mt-4"> Upload ManaBox Inventory and Sold Articles CSVs to see inventory status. </div>
+                <div id="tab-buttons" class="border-b border-slate-200">
+                     <button class="tab-button active" data-tab="tab-transactions">Transactions</button> <button class="tab-button" data-tab="tab-sold-items">Sold Items List</button>
+                 </div>
+                 <div id="tab-content">
+                    <div id="tab-transactions" class="tab-content active">
+                         <h2 class="text-xl font-semibold mb-4 text-slate-800 sr-only">Transactions</h2>
+                         <div id="transactions-error" class="hidden mb-4 p-3 bg-red-100 border border-red-300 text-red-800 rounded-md text-sm"></div>
+                         <div id="transactions-table-container" class="overflow-x-auto custom-scrollbar">
+                             <table class="min-w-full divide-y divide-slate-200 border border-slate-200">
+                                 <thead id="transactions-table-head" class="bg-slate-50"></thead>
+                                 <tbody id="transactions-table-body" class="bg-white divide-y divide-slate-200"></tbody>
+                             </table>
+                         </div>
+                         <div id="transactions-placeholder" class="text-slate-500 py-4"> Upload Cardmarket Sales CSV and Sold Articles CSV to see transactions. </div>
+                    </div>
+                    <div id="tab-sold-items" class="tab-content">
+                        <h2 class="text-xl font-semibold mb-4 text-slate-800 sr-only">Sold Items List</h2>
+                        <div id="sold-items-error" class="hidden mb-4 p-3 bg-red-100 border border-red-300 text-red-800 rounded-md text-sm"></div>
+                        <div id="sold-items-table-container" class="overflow-x-auto custom-scrollbar">
+                             <table class="min-w-full divide-y divide-slate-200 border border-slate-200">
+                                 <thead id="sold-items-table-head" class="bg-slate-50"></thead>
+                                 <tbody id="sold-items-table-body" class="bg-white divide-y divide-slate-200"></tbody>
+                             </table>
+                         </div>
+                         <div id="sold-items-placeholder" class="text-slate-500 mt-4"> Upload Sold Articles CSV to see the list of sold items. </div>
                     </div>
                 </div>
             </section>
@@ -90,48 +119,126 @@
         <footer class="mt-12 text-center text-xs text-slate-500"> <p>Data is stored locally in your browser using Local Storage.</p> </footer>
     </div>
 
+    <div id="upload-modal" class="modal-overlay">
+        <div class="modal-content">
+             <div class="modal-header">
+                <h2 class="text-xl font-semibold text-slate-800">Upload Cardmarket Data</h2>
+                <button id="close-upload-modal-button" class="modal-close-button" aria-label="Close upload modal">&times;</button>
+             </div>
+             <div class="modal-body">
+                <div class="space-y-4">
+                    <div class="p-4 border border-slate-300 rounded-lg shadow-sm bg-white">
+                        <label for="cardmarket-csv" class="block text-sm font-medium text-slate-700 mb-2">1. Sales CSV</label>
+                        <input id="cardmarket-csv" type="file" accept=".csv" class="block w-full text-sm text-slate-600 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <div id="cardmarket-feedback" class="text-xs mt-1"></div>
+                    </div>
+                    <div class="p-4 border border-slate-300 rounded-lg shadow-sm bg-white">
+                        <label for="sold-articles-csv" class="block text-sm font-medium text-slate-700 mb-2">2. Sold Articles CSV</label>
+                        <input id="sold-articles-csv" type="file" accept=".csv" class="block w-full text-sm text-slate-600 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <div id="sold-articles-feedback" class="text-xs mt-1"></div>
+                    </div>
+                </div>
+             </div>
+            <div class="mt-4 pt-4 border-t border-slate-200 text-right">
+                 <button id="modal-done-button" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-150 ease-in-out text-sm font-medium shadow-sm"> Done </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="transaction-details-modal" class="modal-overlay">
+        <div class="modal-content">
+             <div class="modal-header">
+                <h2 id="transaction-details-title" class="text-xl font-semibold text-slate-800">Transaction Details</h2>
+                <button id="close-details-modal-button" class="modal-close-button" aria-label="Close details modal">&times;</button>
+             </div>
+             <div id="transaction-details-body-content" class="modal-body text-sm">
+                 <table class="min-w-full text-sm mb-4">
+                     <thead class="bg-slate-50">
+                         <tr>
+                             <th class="px-2 py-1 text-left text-xs font-medium text-slate-500 uppercase tracking-wider w-1/12">Amt</th>
+                             <th class="px-2 py-1 text-left text-xs font-medium text-slate-500 uppercase tracking-wider w-5/12">Card Name</th>
+                             <th class="px-2 py-1 text-left text-xs font-medium text-slate-500 uppercase tracking-wider w-4/12">Set</th>
+                             <th class="px-2 py-1 text-right text-xs font-medium text-slate-500 uppercase tracking-wider w-2/12">Price</th>
+                         </tr>
+                     </thead>
+                     <tbody id="transaction-details-table-body" class="divide-y divide-slate-200">
+                         </tbody>
+                 </table>
+                 <p id="transaction-details-empty" class="text-slate-500 hidden">No article details found for this transaction in the Sold Articles CSV.</p>
+             </div>
+        </div>
+    </div>
+
+
     <script>
         // --- Constants ---
-        const SALES_DATA_STORAGE_KEY = 'magicCardmarketSalesData_html_v13';
-        const SOLD_ARTICLES_STORAGE_KEY = 'magicSoldArticlesData_html_v13';
-        const INVENTORY_DATA_STORAGE_KEY = 'magicManaboxInventoryData_html_v13';
-        const PRODUCT_CATALOG_STORAGE_KEY = 'magicProductCatalogData_html_v13';
+        const SALES_DATA_STORAGE_KEY = 'magicCardmarketSalesData_html_v23'; // Updated version
+        const SOLD_ARTICLES_STORAGE_KEY = 'magicSoldArticlesData_html_v23'; // Updated version
         // CM Sales Columns
         const CM_REF_COLUMN = 'Reference'; const CM_CATEGORY_COLUMN = 'Category'; const CM_TYPE_COLUMN = 'Type'; const CM_AMOUNT_COLUMN = 'Amount';
+        const CM_DATE_PAID_COL = 'Date Paid';
         // Sold Articles Columns
-        const SA_SHIPMENT_NR_COL = 'Shipment nr.'; const SA_ARTICLE_VALUE_COL = 'Article Value'; const SA_ARTICLE_NAME_COL = 'Article'; const SA_SET_NAME_COL = 'Expansion'; const SA_AMOUNT_COL = 'Amount';
-        // ManaBox Inventory Columns
-        const MB_NAME_COL = 'Name'; const MB_SET_NAME_COL = 'Set name'; const MB_SET_CODE_COL = 'Set code'; const MB_COLLECTOR_NR_COL = 'Collector number'; const MB_QUANTITY_COL = 'Quantity'; const MB_FOIL_COL = 'Foil'; const MB_PURCHASE_PRICE_COL = 'Purchase price'; const MB_CONDITION_COL = 'Condition'; const MB_LANGUAGE_COL = 'Language';
+        const SA_SHIPMENT_NR_COL = 'Shipment nr.';
+        const SA_ARTICLE_NAME_COL = 'Article';
+        const SA_PRODUCT_ID_COL = 'Product ID';
+        const SA_SET_NAME_COL = 'Expansion';
+        const SA_AMOUNT_COL = 'Amount';
+        const SA_ARTICLE_VALUE_COL = 'Article Value';
 
         // --- State Variables ---
         let salesData = [];
         let soldArticlesData = [];
-        let inventoryData = [];
-        let productCatalogData = null;
-        let inventoryStatusData = [];
-        let currentInventoryFilter = { name: '' };
-        let currentInventorySort = { key: 'Name', direction: 'asc' };
-        let calculatedTotals = { revenue: 0, fees: 0, shippingCharged: 0, netEarnings: 0, inventoryValue: 0, soldActualValue: 0, soldEstimatedValue: 0 };
+        let calculatedTotals = { revenue: 0, fees: 0, shippingCharged: 0, netEarnings: 0 };
+        let currentSoldItemsSort = { key: 'Set', direction: 'asc' };
+        let currentTransactionSort = { key: 'ID', direction: 'desc' };
 
         // --- DOM Element References ---
-        const cardmarketInput = document.getElementById('cardmarket-csv'); const soldArticlesInput = document.getElementById('sold-articles-csv'); const manaboxInput = document.getElementById('manabox-csv'); const productCatalogInput = document.getElementById('product-catalog-json');
-        const cardmarketFeedbackEl = document.getElementById('cardmarket-feedback'); const soldArticlesFeedbackEl = document.getElementById('sold-articles-feedback'); const manaboxFeedbackEl = document.getElementById('manabox-feedback'); const productCatalogFeedbackEl = document.getElementById('product-catalog-feedback');
-        const clearDataButton = document.getElementById('clear-data-button'); const clearDataFeedbackEl = document.getElementById('clear-data-feedback');
-        const summaryContentEl = document.getElementById('summary-content'); const summaryPlaceholderEl = document.getElementById('summary-placeholder'); const summaryErrorEl = document.getElementById('summary-error'); const totalRevenueEl = document.getElementById('total-revenue'); const totalFeesEl = document.getElementById('total-fees'); const totalShippingEl = document.getElementById('total-shipping'); const netEarningsEl = document.getElementById('net-earnings'); const totalInventoryValueEl = document.getElementById('total-inventory-value'); const percentageEarnedEl = document.getElementById('percentage-earned');
-        const soldActualValueEl = document.getElementById('sold-actual-value'); const soldEstimatedValueEl = document.getElementById('sold-estimated-value'); const soldPercentageReachedEl = document.getElementById('sold-percentage-reached');
-        const tabButtonsContainer = document.getElementById('tab-buttons'); const tabContentContainer = document.getElementById('tab-content');
-        // Transaction Breakdown
-        const transactionBreakdownContainer = document.getElementById('transaction-breakdown-container'); const transactionBreakdownPlaceholder = document.getElementById('transaction-breakdown-placeholder'); const transactionBreakdownError = document.getElementById('transaction-breakdown-error');
-        // Inventory Status Tab
-        const inventoryFilterNameInput = document.getElementById('inventory-filter-name'); const inventoryStatusTableContainer = document.getElementById('inventory-status-table-container'); const inventoryStatusTableHead = document.getElementById('inventory-status-table-head'); const inventoryStatusTableBody = document.getElementById('inventory-status-table-body'); const inventoryStatusPlaceholder = document.getElementById('inventory-status-placeholder'); const inventoryStatusError = document.getElementById('inventory-status-error');
+        const uploadModal = document.getElementById('upload-modal');
+        const openUploadModalButton = document.getElementById('open-upload-modal-button');
+        const closeUploadModalButton = document.getElementById('close-upload-modal-button');
+        const modalDoneButton = document.getElementById('modal-done-button');
+        const cardmarketInput = document.getElementById('cardmarket-csv');
+        const soldArticlesInput = document.getElementById('sold-articles-csv');
+        const cardmarketFeedbackEl = document.getElementById('cardmarket-feedback');
+        const soldArticlesFeedbackEl = document.getElementById('sold-articles-feedback');
+        const clearDataButton = document.getElementById('clear-data-button');
+        const clearDataFeedbackEl = document.getElementById('clear-data-feedback');
+        const summaryContentEl = document.getElementById('summary-content');
+        const summaryPlaceholderEl = document.getElementById('summary-placeholder');
+        const summaryErrorEl = document.getElementById('summary-error');
+        const totalRevenueEl = document.getElementById('total-revenue');
+        const totalFeesEl = document.getElementById('total-fees');
+        const totalShippingEl = document.getElementById('total-shipping');
+        const netEarningsEl = document.getElementById('net-earnings');
+        const tabButtonsContainer = document.getElementById('tab-buttons');
+        const tabContentContainer = document.getElementById('tab-content');
+        const transactionsTableContainer = document.getElementById('transactions-table-container');
+        const transactionsTableHead = document.getElementById('transactions-table-head');
+        const transactionsTableBody = document.getElementById('transactions-table-body');
+        const transactionsPlaceholder = document.getElementById('transactions-placeholder');
+        const transactionsError = document.getElementById('transactions-error');
+        const soldItemsTableContainer = document.getElementById('sold-items-table-container');
+        const soldItemsTableHead = document.getElementById('sold-items-table-head');
+        const soldItemsTableBody = document.getElementById('sold-items-table-body');
+        const soldItemsPlaceholder = document.getElementById('sold-items-placeholder');
+        const soldItemsError = document.getElementById('sold-items-error');
+        const transactionDetailsModal = document.getElementById('transaction-details-modal');
+        const transactionDetailsTitle = document.getElementById('transaction-details-title');
+        const transactionDetailsTableBody = document.getElementById('transaction-details-table-body');
+        const transactionDetailsEmptyMsg = document.getElementById('transaction-details-empty');
+        const closeDetailsModalButton = document.getElementById('close-details-modal-button');
+
 
         // --- Helper Functions ---
-        function normalizeString(str) { if (typeof str !== 'string') return ''; return str.trim().toLowerCase(); } // Use simple normalization now
+        function normalizeString(str) { if (typeof str !== 'string') return ''; return str.trim().toLowerCase(); }
         function parseCurrency(value) { if (value === null || value === undefined || value === '') return 0; let s = String(value).replace(/[€$£¥\s]/g, '').replace(',', '.'); const n = parseFloat(s); return isNaN(n) ? 0 : n; }
         function formatCell(value) { if (value === null || value === undefined) return ''; return String(value); }
         function formatCurrency(value) { return `€${Number(value).toFixed(2)}`; }
+        function formatDate(dateString) { if (!dateString) return ''; try { const date = new Date(dateString.replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1')); if (isNaN(date.getTime())) return dateString; return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }); } catch (e) { return dateString; } }
         function updateFeedback(el, msg, type = 'info') { el.textContent = msg; el.className = 'text-xs mt-1'; if (type === 'success') el.classList.add('text-green-700'); else if (type === 'error') el.classList.add('text-red-600'); else el.classList.add('text-slate-600'); }
-        function parseCSV(csvText, delimiter) { if (!csvText || typeof csvText !== 'string') { console.error("parseCSV: Input must be a non-empty string."); return null; } if (!delimiter || typeof delimiter !== 'string' || delimiter.length !== 1) { console.error("parseCSV: Delimiter must be a single character."); return null; } try { const lines = csvText.trim().split(/\r?\n/); if (lines.length < 2) return []; const headers = lines[0].split(delimiter).map(h => h.trim()); const results = []; for (let i = 1; i < lines.length; i++) { const line = lines[i].trim(); if (line === '') continue; const values = []; let currentValue = ''; let inQuotes = false; for (let j = 0; j < line.length; j++) { const char = line[j]; if (char === '"') inQuotes = !inQuotes; else if (char === delimiter && !inQuotes) { values.push(currentValue.trim()); currentValue = ''; } else currentValue += char; } values.push(currentValue.trim()); if (values.length === headers.length) { const entry = {}; for (let k = 0; k < headers.length; k++) { let value = values[k]; if (value.startsWith('"') && value.endsWith('"')) value = value.substring(1, value.length - 1); const headerKey = headers[k] || `unknown_header_${k}`; entry[headerKey] = value; } results.push(entry); } else { console.warn(`Skipping row ${i + 1}: Value count (${values.length}) != Header count (${headers.length}). Line: "${line}"`); } } return results; } catch (error) { console.error("Error during custom CSV parsing:", error); return null; } }
+        function parseCSV(csvText, delimiter) { if (!csvText || typeof csvText !== 'string') { console.error("parseCSV: Input must be a non-empty string."); return null; } if (!delimiter || typeof delimiter !== 'string' || delimiter.length !== 1) { console.error("parseCSV: Delimiter must be a single character."); return null; } try { const lines = csvText.trim().split(/\r?\n/); if (lines.length < 2) return []; const headers = lines[0].split(delimiter).map(h => h.trim().replace(/^"(.*)"$/, '$1')); const results = []; for (let i = 1; i < lines.length; i++) { const line = lines[i].trim(); if (line === '') continue; const values = []; let currentValue = ''; let inQuotes = false; for (let j = 0; j < line.length; j++) { const char = line[j]; if (char === '"' && line[j-1] !== '"' && line[j+1] !== '"') { inQuotes = !inQuotes; } else if (char === delimiter && !inQuotes) { values.push(currentValue.trim().replace(/^"(.*)"$/, '$1').replace(/""/g, '"')); currentValue = ''; } else { currentValue += char; } } values.push(currentValue.trim().replace(/^"(.*)"$/, '$1').replace(/""/g, '"')); if (values.length === headers.length) { const entry = {}; for (let k = 0; k < headers.length; k++) { const headerKey = headers[k] || `unknown_header_${k}`; entry[headerKey] = values[k]; } results.push(entry); } else { console.warn(`Skipping row ${i + 1}: Value count (${values.length}) != Header count (${headers.length}). Line: "${line}"`); } } return results; } catch (error) { console.error("Error during custom CSV parsing:", error); return null; } }
+        function generateSlug(text) { if (typeof text !== 'string') return ''; return text .toLowerCase() .trim() .replace(/[:\/']/g, '') .replace(/[\s&()]+/g, '-') .replace(/[^\w-]+/g, '') .replace(/--+/g, '-') .replace(/^-+/, '') .replace(/-+$/, ''); }
+
 
         // --- Core Logic Functions ---
         function handleFileUpload(event, delimiter, dataType, feedbackEl) {
@@ -145,21 +252,15 @@
             reader.onload = (e) => {
                 const fileContent = e.target.result;
                 let needsFullUpdate = false;
-                if (dataType === 'catalog') {
-                    try { productCatalogData = JSON.parse(fileContent); saveProductCatalogToLocalStorage(); updateFeedback(feedbackEl, `Loaded ${fileName}.`, 'success'); console.log("Product catalog loaded:", productCatalogData?.products?.length || 0, "products"); }
-                    catch (error) { console.error("Error parsing product catalog JSON:", error); updateFeedback(feedbackEl, `Error parsing ${fileName}. Not valid JSON.`, 'error'); inputElement.value = ''; productCatalogData = null; return; }
-                } else {
-                    const expectedExtension = '.csv';
-                    if (!fileName.toLowerCase().endsWith(expectedExtension)) { updateFeedback(feedbackEl, `Invalid file type (expected ${expectedExtension}).`, 'error'); inputElement.value = ''; return; }
-                    updateFeedback(feedbackEl, `Parsing ${fileName}...`, 'info');
-                    const parsedData = parseCSV(fileContent, delimiter);
-                    if (parsedData === null) { updateFeedback(feedbackEl, `Error parsing ${fileName}. Check console.`, 'error'); inputElement.value = ''; return; }
-                    const rowCount = parsedData.length;
-                    updateFeedback(feedbackEl, `Loaded ${fileName} (${rowCount} data rows).`, 'success');
-                    if (dataType === 'sales') { salesData = parsedData; saveSalesToLocalStorage(); needsFullUpdate = true; }
-                    else if (dataType === 'soldArticles') { soldArticlesData = parsedData; saveSoldArticlesToLocalStorage(); needsFullUpdate = true; }
-                    else if (dataType === 'inventory') { inventoryData = parsedData; saveInventoryToLocalStorage(); needsFullUpdate = true; }
-                }
+                const expectedExtension = '.csv';
+                if (!fileName.toLowerCase().endsWith(expectedExtension)) { updateFeedback(feedbackEl, `Invalid file type (expected ${expectedExtension}).`, 'error'); inputElement.value = ''; return; }
+                updateFeedback(feedbackEl, `Parsing ${fileName}...`, 'info');
+                const parsedData = parseCSV(fileContent, delimiter);
+                if (parsedData === null) { updateFeedback(feedbackEl, `Error parsing ${fileName}. Check console.`, 'error'); inputElement.value = ''; return; }
+                const rowCount = parsedData.length;
+                updateFeedback(feedbackEl, `Loaded ${fileName} (${rowCount} data rows).`, 'success');
+                if (dataType === 'sales') { salesData = parsedData; saveSalesToLocalStorage(); needsFullUpdate = true; }
+                else if (dataType === 'soldArticles') { soldArticlesData = parsedData; saveSoldArticlesToLocalStorage(); needsFullUpdate = true; }
                 if (needsFullUpdate) { updateAllCalculationsAndDisplays(); }
                 updateClearButtonState();
             };
@@ -168,326 +269,355 @@
         }
 
         function updateAllCalculationsAndDisplays() {
-            calculateInventoryStatus(); // Calculates inventoryStatusData
-            calculateAndDisplaySummary(); // Calculates all summary totals using potentially updated inventoryStatusData
-            updateTransactionBreakdown(); // Displays transaction details
-            displayInventoryStatusTable(); // Displays inventory table using inventoryStatusData
+            summaryErrorEl.textContent = ''; summaryErrorEl.classList.add('hidden');
+            transactionsError.textContent = ''; transactionsError.classList.add('hidden');
+            soldItemsError.textContent = ''; soldItemsError.classList.add('hidden');
+            calculateAndDisplaySummary();
+            displayTransactionsTable();
+            displaySoldItemsTable();
         }
 
         function getGroupedData() {
-            const salesAmountByRef = {}; const feesByRef = {};
-            const articleValueSumByShipment = {}; const articlesByShipment = {};
-            salesData.forEach(t => { const ref = t[CM_REF_COLUMN]; if (!ref) return; const cat = t[CM_CATEGORY_COLUMN]; const type = t[CM_TYPE_COLUMN]; const amt = parseCurrency(t[CM_AMOUNT_COLUMN]); if (cat === 'Sales' && type === 'Sales') salesAmountByRef[ref] = amt; else if (cat === 'Fees' && type === 'Commissions') feesByRef[ref] = Math.abs(amt); });
-            soldArticlesData.forEach(a => { const shipNr = a[SA_SHIPMENT_NR_COL]; if (!shipNr) return; const articleValue = parseCurrency(a[SA_ARTICLE_VALUE_COL]); const quantity = parseInt(a[SA_AMOUNT_COL] || '1', 10); const name = a[SA_ARTICLE_NAME_COL] || 'Unknown'; const set = a[SA_SET_NAME_COL] || 'Unknown Set'; if (!articleValueSumByShipment[shipNr]) articleValueSumByShipment[shipNr] = 0; articleValueSumByShipment[shipNr] += (articleValue * quantity); if (!articlesByShipment[shipNr]) articlesByShipment[shipNr] = []; articlesByShipment[shipNr].push({ name: name, value: articleValue, set: set, quantity: quantity }); });
-            return { salesAmountByRef, feesByRef, articleValueSumByShipment, articlesByShipment };
+            const salesAmountByRef = {}; const feesByRef = {}; const dateByRef = {}; const articlesByShipment = {};
+            salesData.forEach(t => {
+                const ref = t[CM_REF_COLUMN]; if (!ref) return;
+                const cat = t[CM_CATEGORY_COLUMN]; const type = t[CM_TYPE_COLUMN]; const amt = parseCurrency(t[CM_AMOUNT_COLUMN]); const datePaid = t[CM_DATE_PAID_COL];
+                if (cat === 'Sales' && type === 'Sales') { salesAmountByRef[ref] = amt; if (datePaid) { dateByRef[ref] = datePaid; } }
+                else if (cat === 'Fees' && type === 'Commissions') { feesByRef[ref] = Math.abs(amt); }
+            });
+            soldArticlesData.forEach(a => {
+                const shipNr = a[SA_SHIPMENT_NR_COL]; if (!shipNr) return;
+                const articleValue = parseCurrency(a[SA_ARTICLE_VALUE_COL]); const quantity = parseInt(a[SA_AMOUNT_COL] || '1', 10); const name = a[SA_ARTICLE_NAME_COL] || 'Unknown'; const set = a[SA_SET_NAME_COL] || 'Unknown Set'; const productId = a[SA_PRODUCT_ID_COL] || '';
+                if (!articlesByShipment[shipNr]) { articlesByShipment[shipNr] = []; }
+                articlesByShipment[shipNr].push({ name, value: articleValue, set, quantity, productId });
+            });
+            return { salesAmountByRef, feesByRef, dateByRef, articlesByShipment };
         }
 
-        /** Calculates all summary totals and updates the display */
         function calculateAndDisplaySummary() {
-            summaryErrorEl.classList.add('hidden'); summaryErrorEl.textContent = '';
-            const salesLoaded = salesData && salesData.length > 0;
-            const articlesLoaded = soldArticlesData && soldArticlesData.length > 0;
-            const inventoryLoaded = inventoryData && inventoryData.length > 0;
-
-            // Reset totals, including new ones
-            calculatedTotals = { revenue: 0, fees: 0, shippingCharged: 0, netEarnings: 0, inventoryValue: 0, soldActualValue: 0, soldEstimatedValue: 0 };
-
-            // --- Calculate Inventory Value ---
-            if (inventoryLoaded) {
-                 if (inventoryStatusData.length > 0 && validateColumns(inventoryStatusData, ['Est. Price', 'Quantity'], "Inventory Status Data", summaryErrorEl)) {
-                    calculatedTotals.inventoryValue = inventoryStatusData.reduce((sum, item) => sum + ((item['Est. Price'] || 0) * (item['Quantity'] || 0)), 0);
-                 } else if (!validateColumns(inventoryData, [MB_PURCHASE_PRICE_COL, MB_QUANTITY_COL], "ManaBox Inventory", summaryErrorEl)) { /* Error shown */ }
-            }
-
-             // --- Calculate Sales, Fees, Shipping, Sold Value Comparison ---
+            const salesLoaded = salesData && salesData.length > 0; const articlesLoaded = soldArticlesData && soldArticlesData.length > 0;
+            calculatedTotals = { revenue: 0, fees: 0, shippingCharged: 0, netEarnings: 0 };
             if (salesLoaded && articlesLoaded) {
                 const salesColsValid = validateColumns(salesData, [CM_REF_COLUMN, CM_CATEGORY_COLUMN, CM_TYPE_COLUMN, CM_AMOUNT_COLUMN], "Cardmarket Sales", summaryErrorEl);
-                const articlesColsValid = validateColumns(soldArticlesData, [SA_SHIPMENT_NR_COL, SA_ARTICLE_VALUE_COL, SA_AMOUNT_COL, SA_ARTICLE_NAME_COL, SA_SET_NAME_COL], "Sold Articles", summaryErrorEl);
-                // *** Check internal keys needed for est price map - use composite key ***
-                const inventoryStatusColsValid = inventoryStatusData.length > 0 && validateColumns(inventoryStatusData, ['Name', 'Set', 'Est. Price', '_normalizedName', '_normalizedSet'], "Inventory Status Data", summaryErrorEl);
-
+                const articlesColsValid = validateColumns(soldArticlesData, [SA_SHIPMENT_NR_COL, SA_ARTICLE_VALUE_COL, SA_AMOUNT_COL], "Sold Articles", summaryErrorEl);
                 if (salesColsValid && articlesColsValid) {
-                    const { salesAmountByRef, articleValueSumByShipment } = getGroupedData();
+                    const { salesAmountByRef, feesByRef, articlesByShipment } = getGroupedData();
                     calculatedTotals.revenue = salesData.filter(t => t[CM_CATEGORY_COLUMN] === 'Sales' && t[CM_TYPE_COLUMN] === 'Sales').reduce((sum, t) => sum + parseCurrency(t[CM_AMOUNT_COLUMN]), 0);
                     calculatedTotals.fees = salesData.filter(t => t[CM_CATEGORY_COLUMN] === 'Fees' && t[CM_TYPE_COLUMN] === 'Commissions').reduce((sum, t) => sum + Math.abs(parseCurrency(t[CM_AMOUNT_COLUMN])), 0);
-                    for (const ref in salesAmountByRef) { const sumOfArticles = articleValueSumByShipment[ref] || 0; const shipping = Math.max(0, (salesAmountByRef[ref] || 0) - sumOfArticles); calculatedTotals.shippingCharged += shipping; }
-                    calculatedTotals.netEarnings = calculatedTotals.revenue - calculatedTotals.fees - calculatedTotals.shippingCharged;
-
-                    if (inventoryStatusColsValid) {
-                        // *** Create map using CORRECT composite key from inventoryStatusData ***
-                        const estPriceMap = {}; // Key: normalizedName|normalizedSet -> Value: estPrice
-                        inventoryStatusData.forEach(item => {
-                            const key = item['_normalizedName'] + '|' + item['_normalizedSet'];
-                            if (!(key in estPriceMap)) { estPriceMap[key] = item['Est. Price'] || 0; }
-                        });
-
-                        calculatedTotals.soldActualValue = 0;
-                        calculatedTotals.soldEstimatedValue = 0;
-                        soldArticlesData.forEach(a => {
-                            const name = normalizeString(a[SA_ARTICLE_NAME_COL]);
-                            const set = normalizeString(a[SA_SET_NAME_COL] || '');
-                            const key = name + '|' + set; // Composite key for lookup
-                            const quantity = parseInt(a[SA_AMOUNT_COL] || '1', 10);
-                            const articleValue = parseCurrency(a[SA_ARTICLE_VALUE_COL]);
-                            const estPrice = estPriceMap[key] || 0; // Look up using composite key
-
-                            calculatedTotals.soldActualValue += (articleValue * quantity);
-                            calculatedTotals.soldEstimatedValue += (estPrice * quantity);
-                        });
-                    } else {
-                         console.warn("Cannot calculate Sold Estimated Value accurately due to missing/invalid inventory status data.");
+                    let totalItemValueSum = 0;
+                    for (const ref in salesAmountByRef) {
+                        const articlesInShipment = articlesByShipment[ref] || [];
+                        const sumOfArticles = articlesInShipment.reduce((sum, item) => sum + (item.value * item.quantity), 0);
+                        const shipping = Math.max(0, (salesAmountByRef[ref] || 0) - sumOfArticles);
+                        calculatedTotals.shippingCharged += shipping; totalItemValueSum += sumOfArticles;
                     }
-                }
+                    calculatedTotals.netEarnings = totalItemValueSum - calculatedTotals.fees;
+                } else { console.warn("Summary calculation skipped or inaccurate due to missing columns."); }
             }
-
-            totalRevenueEl.textContent = formatCurrency(calculatedTotals.revenue); totalFeesEl.textContent = formatCurrency(calculatedTotals.fees); totalShippingEl.textContent = formatCurrency(calculatedTotals.shippingCharged); netEarningsEl.textContent = formatCurrency(calculatedTotals.netEarnings); totalInventoryValueEl.textContent = formatCurrency(calculatedTotals.inventoryValue);
-            const percentageEarned = calculatedTotals.inventoryValue > 0 ? (calculatedTotals.revenue / calculatedTotals.inventoryValue) * 100 : 0;
-            percentageEarnedEl.textContent = `(${percentageEarned.toFixed(1)}% Earned vs Revenue)`;
-            soldActualValueEl.textContent = `${formatCurrency(calculatedTotals.soldActualValue)} (Actual)`; soldEstimatedValueEl.textContent = `vs ${formatCurrency(calculatedTotals.soldEstimatedValue)} (Est.)`;
-            const soldPercentageReached = calculatedTotals.soldEstimatedValue > 0 ? (calculatedTotals.soldActualValue / calculatedTotals.soldEstimatedValue) * 100 : 0;
-            soldPercentageReachedEl.textContent = `(${soldPercentageReached.toFixed(1)}% of Est. Reached)`;
-
-
+            totalRevenueEl.textContent = formatCurrency(calculatedTotals.revenue); totalFeesEl.textContent = formatCurrency(calculatedTotals.fees); totalShippingEl.textContent = formatCurrency(calculatedTotals.shippingCharged); netEarningsEl.textContent = formatCurrency(calculatedTotals.netEarnings);
             if (salesLoaded && articlesLoaded) { summaryContentEl.classList.remove('hidden'); summaryPlaceholderEl.classList.add('hidden'); }
             else { summaryContentEl.classList.add('hidden'); summaryPlaceholderEl.classList.remove('hidden'); summaryPlaceholderEl.textContent = !salesLoaded ? 'Upload Cardmarket Sales CSV...' : 'Upload Sold Articles CSV...'; }
         }
 
-
         function validateColumns(data, requiredCols, csvName, errorElement) {
-             if (!data || data.length === 0) return true; const firstRow = data[0]; const missingCols = requiredCols.filter(col => !(col in firstRow));
-             if (missingCols.length > 0) { const errorMsg = `Required columns missing in ${csvName} CSV: ${missingCols.join(', ')}. Calculations may be inaccurate.`; console.error("Validation Error:", errorMsg); if (errorElement) { errorElement.textContent = errorMsg; errorElement.classList.remove('hidden'); } return false; }
-             if (errorElement && !errorElement.classList.contains('hidden') ) { errorElement.classList.add('hidden'); }
-             return true;
+             if (!data || data.length === 0) return true; const firstRow = data[0]; if (!firstRow) return true; const foundHeaders = Object.keys(firstRow); const missingCols = requiredCols.filter(col => !foundHeaders.includes(col));
+             if (missingCols.length > 0) {
+                 const errorMsg = `Required columns missing in ${csvName} CSV: ${missingCols.join(', ')}. Views using this data may be incomplete or fail.`; console.error("Validation Error:", errorMsg, "Expected:", requiredCols, "Found:", foundHeaders);
+                 if (errorElement) { const existingError = errorElement.textContent; if (!existingError.includes(errorMsg)) { errorElement.textContent = existingError ? `${existingError}\n${errorMsg}` : errorMsg; } errorElement.classList.remove('hidden'); } return false;
+             }
+             if (errorElement && !errorElement.classList.contains('hidden')) { const errorMsgPattern = `Required columns missing in ${csvName} CSV:.*?(\n|$)`; const regex = new RegExp(errorMsgPattern, 'g'); const currentError = errorElement.textContent; const newError = currentError.replace(regex, '').trim(); errorElement.textContent = newError; if (!newError) { errorElement.classList.add('hidden'); } } return true;
         }
 
-        function updateTransactionBreakdown() {
-            transactionBreakdownContainer.innerHTML = ''; transactionBreakdownError.classList.add('hidden'); transactionBreakdownError.textContent = '';
+        /** Displays the sortable table of transactions */
+        function displayTransactionsTable() {
+            transactionsTableBody.innerHTML = ''; transactionsTableHead.innerHTML = '';
             const salesLoaded = salesData && salesData.length > 0; const articlesLoaded = soldArticlesData && soldArticlesData.length > 0;
-            if (!salesLoaded || !articlesLoaded) { transactionBreakdownContainer.classList.add('hidden'); transactionBreakdownPlaceholder.classList.remove('hidden'); return; }
-            if (!validateColumns(salesData, [CM_REF_COLUMN, CM_CATEGORY_COLUMN, CM_TYPE_COLUMN, CM_AMOUNT_COLUMN], "Cardmarket Sales", transactionBreakdownError)){ return; }
-            if (!validateColumns(soldArticlesData, [SA_SHIPMENT_NR_COL, SA_ARTICLE_VALUE_COL, SA_ARTICLE_NAME_COL, SA_SET_NAME_COL, SA_AMOUNT_COL], "Sold Articles", transactionBreakdownError)){ return; }
+            if (!salesLoaded || !articlesLoaded) { transactionsTableContainer.classList.add('hidden'); transactionsPlaceholder.classList.remove('hidden'); transactionsPlaceholder.textContent = !salesLoaded ? 'Upload Cardmarket Sales CSV...' : 'Upload Sold Articles CSV...'; return; }
 
-            const { salesAmountByRef, feesByRef, articleValueSumByShipment, articlesByShipment } = getGroupedData();
+            const requiredSalesCols = [CM_REF_COLUMN, CM_CATEGORY_COLUMN, CM_TYPE_COLUMN, CM_AMOUNT_COLUMN];
+            const requiredArticlesCols = [SA_SHIPMENT_NR_COL, SA_ARTICLE_VALUE_COL, SA_AMOUNT_COL];
+            const hasDateColumn = salesData[0] && salesData[0].hasOwnProperty(CM_DATE_PAID_COL);
+            let proceed = true;
+            if (!validateColumns(salesData, requiredSalesCols, "Cardmarket Sales", transactionsError)) { proceed = false; }
+            if (!validateColumns(soldArticlesData, requiredArticlesCols, "Sold Articles", transactionsError)) { proceed = false; }
+            if (!proceed) { transactionsTableContainer.classList.add('hidden'); transactionsPlaceholder.classList.remove('hidden'); transactionsPlaceholder.textContent = 'Cannot display transactions due to missing columns. Check errors above.'; return; }
+
+            const { salesAmountByRef, feesByRef, dateByRef, articlesByShipment } = getGroupedData();
             const references = Object.keys(salesAmountByRef);
-            if (references.length === 0) { transactionBreakdownContainer.classList.add('hidden'); transactionBreakdownPlaceholder.classList.remove('hidden'); transactionBreakdownPlaceholder.textContent = "No sales transactions found."; return; }
+            if (references.length === 0) { transactionsTableContainer.classList.add('hidden'); transactionsPlaceholder.classList.remove('hidden'); transactionsPlaceholder.textContent = "No sales transactions found in Sales CSV."; return; }
 
-            references.sort((a, b) => Number(b) - Number(a)).forEach(ref => {
-                const salesAmount = salesAmountByRef[ref] || 0; const fees = feesByRef[ref] || 0; const sumOfArticles = articleValueSumByShipment[ref] || 0; const articles = articlesByShipment[ref] || []; const shippingCharged = Math.max(0, salesAmount - sumOfArticles); const transactionEarnings = sumOfArticles - fees;
-                const card = document.createElement('div'); card.className = 'transaction-card grid grid-cols-1 md:grid-cols-5 gap-3 text-sm';
-                card.innerHTML += `<div class="md:col-span-1"><strong class="block text-slate-600">Transaction ID:</strong> ${ref}</div>`;
-                let itemsHtml = '<ul class="list-disc list-inside text-xs">'; articles.forEach(item => { itemsHtml += `<li>${item.quantity}x ${formatCell(item.name)} (${formatCell(item.set)}) - ${formatCurrency(item.value)}</li>`; }); itemsHtml += '</ul>';
-                card.innerHTML += `<div class="md:col-span-1"><strong class="block text-slate-600 mb-1">Items:</strong> ${itemsHtml}</div>`;
-                card.innerHTML += `<div class="md:col-span-1"><strong class="block text-slate-600">Total Paid:</strong> ${formatCurrency(salesAmount)}<br><strong class="block text-slate-600 mt-1">Item Value(s):</strong> ${formatCurrency(sumOfArticles)}</div>`;
-                card.innerHTML += `<div class="md:col-span-1"><strong class="block text-slate-600">Fees:</strong> ${formatCurrency(fees)}<br><strong class="block text-slate-600 mt-1">Shipping Charged:</strong> ${formatCurrency(shippingCharged)}</div>`;
-                card.innerHTML += `<div class="md:col-span-1"><strong class="block text-slate-600">Transaction Earnings:</strong> <span class="${transactionEarnings >= 0 ? 'text-green-700' : 'text-red-700'} font-semibold">${formatCurrency(transactionEarnings)}</span><br><span class="text-xs text-slate-500">(Item Value(s) - Fees)</span></div>`;
-                transactionBreakdownContainer.appendChild(card);
+            const transactionTableData = references.map(ref => {
+                const salesAmount = salesAmountByRef[ref] || 0; const fees = feesByRef[ref] || 0; const articles = articlesByShipment[ref] || []; const date = dateByRef[ref] || '';
+                const sumOfArticles = articles.reduce((sum, item) => sum + (item.value * item.quantity), 0); const itemCount = articles.reduce((sum, item) => sum + item.quantity, 0); const shippingCharged = Math.max(0, salesAmount - sumOfArticles); const transactionEarnings = sumOfArticles - fees;
+                return { 'ID': ref, 'Date': date, 'Total Paid': salesAmount, 'Item Value': sumOfArticles, 'Shipping': shippingCharged, 'Fees': fees, 'Net Earnings': transactionEarnings, 'Items': itemCount };
             });
-            transactionBreakdownContainer.classList.remove('hidden'); transactionBreakdownPlaceholder.classList.add('hidden');
-        }
 
-        /** Calculates derived inventory status data using composite key (name|set) and distributes sold counts */
-        function calculateInventoryStatus() {
-            inventoryStatusError.classList.add('hidden'); inventoryStatusError.textContent = '';
-            inventoryStatusData = [];
-            const inventoryLoaded = inventoryData && inventoryData.length > 0;
-            const articlesLoaded = soldArticlesData && soldArticlesData.length > 0;
+            const sortKey = currentTransactionSort.key; const sortDir = currentTransactionSort.direction;
+            const sortableCols = { 'ID': 'number', 'Date': 'date', 'Total Paid': 'number', 'Item Value': 'number', 'Shipping': 'number', 'Fees': 'number', 'Net Earnings': 'number', 'Items': 'number' };
+            transactionTableData.sort((a, b) => {
+                const valA = a[sortKey]; const valB = b[sortKey]; const sortType = sortableCols[sortKey] || 'string'; let comparison = 0;
+                if (sortType === 'number') { comparison = (Number(valA) || 0) - (Number(valB) || 0); } else if (sortType === 'date') { comparison = (new Date(valA) || 0) - (new Date(valB) || 0); } else { comparison = String(valA || '').localeCompare(String(valB || '')); }
+                if (sortKey === 'ID') { comparison = Number(valA) - Number(valB); } return sortDir === 'asc' ? comparison : -comparison;
+            });
 
-            if (!inventoryLoaded) return;
+            const baseHeaders = ['ID', 'Items', 'Total Paid', 'Item Value', 'Shipping', 'Fees', 'Net Earnings'];
+            const displayHeaders = hasDateColumn ? ['ID', 'Date', 'Items', 'Total Paid', 'Item Value', 'Shipping', 'Fees', 'Net Earnings'] : baseHeaders;
+            const headerRow = document.createElement('tr');
+            displayHeaders.forEach(headerText => {
+                const th = document.createElement('th'); th.scope = 'col'; const isNumeric = ['Total Paid', 'Item Value', 'Shipping', 'Fees', 'Net Earnings', 'Items'].includes(headerText); const isCenter = ['Items'].includes(headerText);
+                th.className = `px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap ${isNumeric ? 'number-header' : ''} ${isCenter ? 'center-header' : ''}`;
+                th.textContent = headerText;
+                if (sortableCols[headerText]) {
+                    th.dataset.sortKey = headerText; th.style.cursor = 'pointer'; const arrowSpan = document.createElement('span'); arrowSpan.className = 'sort-arrow'; if (sortKey === headerText) { arrowSpan.classList.add(sortDir); } th.appendChild(arrowSpan); th.addEventListener('click', handleTransactionSortClick);
+                }
+                headerRow.appendChild(th);
+            });
+            transactionsTableHead.appendChild(headerRow);
 
-            // Validate required columns for inventory
-            // *** Added MB_COLLECTOR_NR_COL validation ***
-            if (!validateColumns(inventoryData, [MB_NAME_COL, MB_SET_NAME_COL, MB_SET_CODE_COL, MB_COLLECTOR_NR_COL, MB_QUANTITY_COL, MB_FOIL_COL, MB_PURCHASE_PRICE_COL, MB_LANGUAGE_COL], "ManaBox Inventory", inventoryStatusError)) return;
-            // Validate required columns for sold articles if loaded
-            if (articlesLoaded && !validateColumns(soldArticlesData, [SA_ARTICLE_NAME_COL, SA_SET_NAME_COL, SA_AMOUNT_COL, SA_ARTICLE_VALUE_COL], "Sold Articles", inventoryStatusError)) { /* Proceed, sold data might be incomplete */ }
-
-            // Calculate Sold Stats using composite key: normalizedName|normalizedSet
-            const soldStats = {}; // Key: name|set -> Value: { count: number, totalValue: number }
-            if (articlesLoaded) {
-                soldArticlesData.forEach(article => {
-                    // *** Use full normalized name for matching key ***
-                    const name = normalizeString(article[SA_ARTICLE_NAME_COL]);
-                    const set = normalizeString(article[SA_SET_NAME_COL] || '');
-                    const quantity = parseInt(article[SA_AMOUNT_COL] || '1', 10);
-                    const articleValue = parseCurrency(article[SA_ARTICLE_VALUE_COL]);
-                    const key = `${name}|${set}`; // Composite Key
-
-                    if (!soldStats[key]) soldStats[key] = { count: 0, totalValue: 0 };
-                    soldStats[key].count += quantity;
-                    soldStats[key].totalValue += (articleValue * quantity);
+            transactionTableData.forEach(item => {
+                const row = document.createElement('tr'); row.className = 'hover:bg-slate-50 transition-colors duration-150 ease-in-out';
+                displayHeaders.forEach(header => {
+                    const cell = document.createElement('td'); const isNumeric = ['Total Paid', 'Item Value', 'Shipping', 'Fees', 'Net Earnings', 'Items', 'ID'].includes(header); const isCenter = ['Items'].includes(header);
+                    cell.className = `px-4 py-2 whitespace-nowrap text-sm text-slate-700 ${isNumeric ? 'number-cell' : ''} ${isCenter ? 'center-cell' : ''}`;
+                    let cellValue = item.hasOwnProperty(header) ? item[header] : '';
+                    if (header === 'ID') { // Make ID clickable
+                        cell.innerHTML = `<span class="clickable-id" data-transaction-id="${cellValue}">${cellValue}</span>`;
+                    } else if (header === 'Date') { cell.textContent = formatDate(cellValue); }
+                    else if (['Total Paid', 'Item Value', 'Shipping', 'Fees', 'Net Earnings'].includes(header)) { cell.textContent = formatCurrency(cellValue); }
+                    else { cell.textContent = formatCell(cellValue); }
+                    if (header === 'Net Earnings') { cell.classList.add(cellValue >= 0 ? 'text-green-700' : 'text-red-700', 'font-semibold'); }
+                    row.appendChild(cell);
                 });
-            }
-
-            // *** Keep track of allocated sold counts during inventory mapping ***
-            const allocatedSoldCounts = {}; // Key: name|set -> Value: count allocated so far
-
-            // Map inventory data using the same composite key and allocate sold counts
-            inventoryStatusData = inventoryData.map(item => {
-                const name = normalizeString(item[MB_NAME_COL]);
-                const set = normalizeString(item[MB_SET_NAME_COL] || '');
-                const key = `${name}|${set}`; // Composite Key
-
-                const stats = soldStats[key] || { count: 0, totalValue: 0 };
-                const totalSoldForKey = stats.count; // Total sold for this name/set combo
-                const alreadyAllocated = allocatedSoldCounts[key] || 0;
-
-                const originalQuantity = parseInt(item[MB_QUANTITY_COL] || '0', 10);
-
-                // *** Calculate quantity sold FROM THIS LINE using distributed allocation ***
-                const remainingNeeded = totalSoldForKey - alreadyAllocated;
-                const quantitySoldThisLine = Math.min(originalQuantity, Math.max(0, remainingNeeded));
-
-                // *** Update allocated count for the next line with the same key ***
-                allocatedSoldCounts[key] = alreadyAllocated + quantitySoldThisLine;
-
-                const quantityAvailable = originalQuantity - quantitySoldThisLine;
-                const estPrice = parseCurrency(item[MB_PURCHASE_PRICE_COL]);
-                // Average sold price remains the same for all items matching the key
-                const averageSoldPrice = totalSoldForKey > 0 ? stats.totalValue / totalSoldForKey : 0;
-
-                // Return object with keys matching display headers
-                return {
-                    'Name': item[MB_NAME_COL],
-                    'Set': item[MB_SET_CODE_COL], // Use Set Code
-                    'Collector #': item[MB_COLLECTOR_NR_COL], // *** Add Collector Number ***
-                    'Foil': item[MB_FOIL_COL],
-                    'Lang': item[MB_LANGUAGE_COL],
-                    'Est. Price': estPrice,
-                    'Sold Price': averageSoldPrice,
-                    'Quantity': originalQuantity,
-                    'Sold': quantitySoldThisLine, // Use quantity sold from this specific line
-                    'Available': quantityAvailable,
-                    // Internal keys for consistent lookup if needed later
-                    '_normalizedName': name,
-                    '_normalizedSet': set
-                };
+                transactionsTableBody.appendChild(row);
             });
-             // console.log("Calculated Inventory Status:", inventoryStatusData.length);
+            transactionsTableContainer.classList.remove('hidden'); transactionsPlaceholder.classList.add('hidden');
+        }
+
+        /** Handles clicks on the transaction table headers for sorting */
+        function handleTransactionSortClick(event) {
+            const targetTh = event.currentTarget; const newSortKey = targetTh.dataset.sortKey; if (!newSortKey) return;
+            if (newSortKey === currentTransactionSort.key) { currentTransactionSort.direction = currentTransactionSort.direction === 'asc' ? 'desc' : 'asc'; }
+            else { currentTransactionSort.key = newSortKey; currentTransactionSort.direction = ['ID', 'Date'].includes(newSortKey) ? 'desc' : 'asc'; }
+            displayTransactionsTable();
         }
 
 
-        /** Displays the filtered and sorted inventory status table */
-        function displayInventoryStatusTable() {
-            inventoryStatusError.classList.add('hidden'); inventoryStatusError.textContent = '';
-            const inventoryLoaded = inventoryData && inventoryData.length > 0;
+        /** Displays the sortable table of individually sold items */
+        function displaySoldItemsTable() {
+            soldItemsTableBody.innerHTML = ''; soldItemsTableHead.innerHTML = '';
+            const articlesLoaded = soldArticlesData && soldArticlesData.length > 0;
+            if (!articlesLoaded) { soldItemsTableContainer.classList.add('hidden'); soldItemsPlaceholder.classList.remove('hidden'); soldItemsPlaceholder.textContent = 'Upload Sold Articles CSV to see the list of sold items.'; return; }
 
-            if (!inventoryLoaded || !inventoryStatusData || inventoryStatusData.length === 0) {
-                 inventoryStatusTableContainer.classList.add('hidden');
-                 inventoryStatusPlaceholder.classList.remove('hidden');
-                 inventoryStatusPlaceholder.textContent = inventoryLoaded ? 'No inventory data calculated or matches filter.' : 'Upload ManaBox Inventory CSV to see inventory status.';
-                 inventoryStatusTableHead.innerHTML = ''; inventoryStatusTableBody.innerHTML = '';
-                 return;
-            }
+            // Removed Foil column validation, kept Shipment Nr for linking
+            const tableCols = [SA_SET_NAME_COL, SA_ARTICLE_NAME_COL, SA_ARTICLE_VALUE_COL, SA_AMOUNT_COL, SA_SHIPMENT_NR_COL];
+            if (!validateColumns(soldArticlesData, tableCols, "Sold Articles", soldItemsError)) { soldItemsTableContainer.classList.add('hidden'); soldItemsPlaceholder.classList.remove('hidden'); soldItemsPlaceholder.textContent = 'Cannot display table due to missing columns in Sold Articles CSV. Check errors above.'; return; }
 
-            const filterText = normalizeString(currentInventoryFilter.name);
-            const filteredData = inventoryStatusData.filter(item => {
-                return !filterText || normalizeString(item['Name']).includes(filterText);
+            const flatSoldItems = [];
+            soldArticlesData.forEach(row => {
+                const quantity = parseInt(row[SA_AMOUNT_COL] || '1', 10); const price = parseCurrency(row[SA_ARTICLE_VALUE_COL]); const setName = row[SA_SET_NAME_COL] || 'Unknown Set'; const cardName = row[SA_ARTICLE_NAME_COL] || 'Unknown Card'; const transactionId = row[SA_SHIPMENT_NR_COL] || '';
+                for (let i = 0; i < quantity; i++) {
+                    flatSoldItems.push({ 'Transaction ID': transactionId, 'Set': setName, 'Card Name': cardName, 'Price': price, '_SetSlug': generateSlug(setName), '_CardSlug': generateSlug(cardName) });
+                }
             });
 
-            const sortKey = currentInventorySort.key;
-            const sortDir = currentInventorySort.direction;
-            // *** Updated sortableCols with Collector # ***
-            const sortableCols = { 'Name': 'string', 'Set': 'string', 'Collector #': 'string', 'Lang': 'string', 'Est. Price': 'number', 'Sold Price': 'number', 'Quantity': 'number', 'Sold': 'number', 'Available': 'number' };
-
-            const sortedData = [...filteredData].sort((a, b) => {
-                const valA = a[sortKey]; const valB = b[sortKey];
-                const sortType = sortableCols[sortKey] || 'string';
-                let comparison = 0;
-                // Special sort for collector number
-                if (sortKey === 'Collector #') {
-                    const numA = parseInt(valA, 10); const numB = parseInt(valB, 10);
-                    if (!isNaN(numA) && !isNaN(numB)) { comparison = numA - numB; }
-                    else { comparison = String(valA || '').localeCompare(String(valB || '')); } // Fallback
-                } else if (sortType === 'number') { comparison = (Number(valA) || 0) - (Number(valB) || 0); }
+            const sortKey = currentSoldItemsSort.key; const sortDir = currentSoldItemsSort.direction;
+            // Removed Foil from sortable cols
+            const sortableCols = { 'Transaction ID': 'number', 'Set': 'string', 'Card Name': 'string', 'Price': 'number' };
+            flatSoldItems.sort((a, b) => {
+                const valA = a[sortKey]; const valB = b[sortKey]; const sortType = sortableCols[sortKey] || 'string'; let comparison = 0;
+                if (sortType === 'number') { comparison = (Number(valA) || 0) - (Number(valB) || 0); }
                 else { comparison = String(valA || '').localeCompare(String(valB || '')); }
+                if (sortKey === 'Transaction ID') { comparison = Number(valA) - Number(valB); }
                 return sortDir === 'asc' ? comparison : -comparison;
             });
 
-            inventoryStatusTableBody.innerHTML = ''; inventoryStatusTableHead.innerHTML = '';
-            // *** Updated displayHeaders ***
-            const displayHeaders = ['Name', 'Set', 'Collector #', 'Foil', 'Lang', 'Est. Price', 'Sold Price', 'Quantity', 'Sold', 'Available'];
+            // Removed 'Foil' from display headers
+            const displayHeaders = ['Transaction ID', 'Set', 'Card Name', 'Price'];
             const headerRow = document.createElement('tr');
             displayHeaders.forEach(headerText => {
-                const th = document.createElement('th');
-                th.scope = 'col';
-                const isNumeric = ['Est. Price', 'Sold Price', 'Quantity', 'Sold', 'Available', 'Collector #'].includes(headerText); // Align Collector # right
+                const th = document.createElement('th'); th.scope = 'col'; const isNumeric = ['Price', 'Transaction ID'].includes(headerText);
                 th.className = `px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap ${isNumeric ? 'number-header' : ''}`;
                 th.textContent = headerText;
                 if (sortableCols[headerText]) {
-                    th.dataset.sortKey = headerText; th.style.cursor = 'pointer';
-                    const arrowSpan = document.createElement('span'); arrowSpan.className = 'sort-arrow';
-                    if (sortKey === headerText) arrowSpan.classList.add(sortDir);
-                    th.appendChild(arrowSpan);
-                    th.addEventListener('click', handleInventorySortClick);
-                } headerRow.appendChild(th);
+                    th.dataset.sortKey = headerText; th.style.cursor = 'pointer'; const arrowSpan = document.createElement('span'); arrowSpan.className = 'sort-arrow'; if (sortKey === headerText) { arrowSpan.classList.add(sortDir); } th.appendChild(arrowSpan); th.addEventListener('click', handleSoldItemsSortClick);
+                }
+                headerRow.appendChild(th);
             });
-            inventoryStatusTableHead.appendChild(headerRow);
+            soldItemsTableHead.appendChild(headerRow);
 
-            if (sortedData.length === 0) {
-                 const row = inventoryStatusTableBody.insertRow(); const cell = row.insertCell(); cell.colSpan = displayHeaders.length; cell.textContent = "No inventory items match the current filter."; cell.className = "text-center text-slate-500 py-4";
+            if (flatSoldItems.length === 0) {
+                 const row = soldItemsTableBody.insertRow(); const cell = row.insertCell(); cell.colSpan = displayHeaders.length; cell.textContent = "No sold items found in the uploaded CSV."; cell.className = "text-center text-slate-500 py-4";
             } else {
-                sortedData.forEach((item) => {
+                flatSoldItems.forEach((item) => {
                     const row = document.createElement('tr'); row.className = 'hover:bg-slate-50 transition-colors duration-150 ease-in-out';
                     displayHeaders.forEach(header => {
-                        const cell = document.createElement('td');
-                        const isNumeric = ['Est. Price', 'Sold Price', 'Quantity', 'Sold', 'Available', 'Collector #'].includes(header);
+                        const cell = document.createElement('td'); const isNumeric = ['Price', 'Transaction ID'].includes(header);
                         cell.className = `px-4 py-2 whitespace-nowrap text-sm text-slate-700 ${isNumeric ? 'number-cell' : ''}`;
                         let cellValue = item.hasOwnProperty(header) ? item[header] : '';
-                        if (header === 'Available') { cell.innerHTML = `<span class="${cellValue > 0 ? 'status-available' : 'status-soldout'}">${cellValue}</span>`; }
-                        else if (header === 'Est. Price' || header === 'Sold Price') { cell.textContent = formatCurrency(cellValue); }
-                        else if (header === 'Foil') { cell.innerHTML = normalizeString(cellValue) === 'foil' ? '⭐' : ''; cell.classList.add('foil-cell'); }
-                        else { cell.textContent = formatCell(cellValue); }
+
+                        if (header === 'Transaction ID') { // Make ID clickable
+                            cell.innerHTML = `<span class="clickable-id" data-transaction-id="${cellValue}">${cellValue}</span>`;
+                        } else if (header === 'Price') { cell.textContent = formatCurrency(cellValue); }
+                        else if (header === 'Card Name') {
+                            const cardSlug = item['_CardSlug']; const setSlug = item['_SetSlug']; const link = `https://www.cardmarket.com/en/Magic/Products/Singles/${setSlug}/${cardSlug}`;
+                            cell.innerHTML = `<a href="${link}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 hover:underline">${formatCell(cellValue)}</a>`;
+                        } else { cell.textContent = formatCell(cellValue); }
                         row.appendChild(cell);
-                    }); inventoryStatusTableBody.appendChild(row);
+                    });
+                    soldItemsTableBody.appendChild(row);
                 });
             }
-            inventoryStatusTableContainer.classList.remove('hidden');
-            inventoryStatusPlaceholder.classList.add('hidden');
+            soldItemsTableContainer.classList.remove('hidden'); soldItemsPlaceholder.classList.add('hidden');
         }
 
-        function handleInventorySortClick(event) { const targetTh = event.currentTarget; const newSortKey = targetTh.dataset.sortKey; if (!newSortKey) return; if (newSortKey === currentInventorySort.key) { currentInventorySort.direction = currentInventorySort.direction === 'asc' ? 'desc' : 'asc'; } else { currentInventorySort.key = newSortKey; currentInventorySort.direction = 'asc'; } displayInventoryStatusTable(); }
-        function handleInventoryFilterInput(event) { currentInventoryFilter.name = event.target.value; displayInventoryStatusTable(); }
-        function updateClearButtonState() { const hasData = (salesData && salesData.length > 0) || (soldArticlesData && soldArticlesData.length > 0) || (inventoryData && inventoryData.length > 0) || (productCatalogData); clearDataButton.disabled = !hasData; clearDataFeedbackEl.textContent = hasData ? 'Clears all stored data from this browser.' : 'No data stored.'; }
+        /** Handles clicks on the sold items table headers for sorting */
+        function handleSoldItemsSortClick(event) {
+            const targetTh = event.currentTarget; const newSortKey = targetTh.dataset.sortKey; if (!newSortKey) return;
+            if (newSortKey === currentSoldItemsSort.key) { currentSoldItemsSort.direction = currentSoldItemsSort.direction === 'asc' ? 'desc' : 'asc'; }
+            else { currentSoldItemsSort.key = newSortKey; currentSoldItemsSort.direction = 'asc'; }
+            displaySoldItemsTable();
+        }
+
+        /** Updates the enabled/disabled state of the clear button */
+        function updateClearButtonState() {
+            const hasData = (salesData && salesData.length > 0) || (soldArticlesData && soldArticlesData.length > 0);
+            clearDataButton.disabled = !hasData; clearDataFeedbackEl.textContent = hasData ? 'Clears stored sales & articles data.' : 'No data stored.';
+        }
 
         // --- Local Storage Functions ---
         function saveSalesToLocalStorage() { try { localStorage.setItem(SALES_DATA_STORAGE_KEY, JSON.stringify(salesData)); } catch (e) { console.error('Failed to save sales data:', e); } }
         function loadSalesFromLocalStorage() { const d=localStorage.getItem(SALES_DATA_STORAGE_KEY); if(d){try{const p=JSON.parse(d);if(Array.isArray(p)){salesData=p;return true;}}catch(e){console.error('Failed to parse sales data:',e);localStorage.removeItem(SALES_DATA_STORAGE_KEY);}} return false; }
         function saveSoldArticlesToLocalStorage() { try { localStorage.setItem(SOLD_ARTICLES_STORAGE_KEY, JSON.stringify(soldArticlesData)); } catch (e) { console.error('Failed to save sold articles data:', e); } }
         function loadSoldArticlesFromLocalStorage() { const d=localStorage.getItem(SOLD_ARTICLES_STORAGE_KEY); if(d){try{const p=JSON.parse(d);if(Array.isArray(p)){soldArticlesData=p;return true;}}catch(e){console.error('Failed to parse sold articles data:',e);localStorage.removeItem(SOLD_ARTICLES_STORAGE_KEY);}} return false; }
-        function saveInventoryToLocalStorage() { try { localStorage.setItem(INVENTORY_DATA_STORAGE_KEY, JSON.stringify(inventoryData)); } catch (e) { console.error('Failed to save inventory data:', e); } }
-        function loadInventoryFromLocalStorage() { const d=localStorage.getItem(INVENTORY_DATA_STORAGE_KEY); if(d){try{const p=JSON.parse(d);if(Array.isArray(p)){inventoryData=p;return true;}}catch(e){console.error('Failed to parse inventory data:',e);localStorage.removeItem(INVENTORY_DATA_STORAGE_KEY);}} return false; }
-        function saveProductCatalogToLocalStorage() { try { localStorage.setItem(PRODUCT_CATALOG_STORAGE_KEY, JSON.stringify(productCatalogData)); } catch (e) { console.error('Failed to save product catalog data:', e); } }
-        function loadProductCatalogFromLocalStorage() { const d=localStorage.getItem(PRODUCT_CATALOG_STORAGE_KEY); if(d){try{const p=JSON.parse(d);if(p){productCatalogData=p;console.log(`Loaded product catalog.`);return true;}}catch(e){console.error('Failed to parse product catalog data:',e);localStorage.removeItem(PRODUCT_CATALOG_STORAGE_KEY);}} return false; }
 
-        /** Clears ALL data */
+        /** Clears ALL stored data */
         function clearAllData() {
-            if (confirm('Are you sure you want to clear ALL stored data (Sales, Sold Articles, Inventory, Product Catalog)? This cannot be undone.')) {
-                salesData = []; soldArticlesData = []; inventoryData = []; inventoryStatusData = []; productCatalogData = null;
-                calculatedTotals = { revenue: 0, fees: 0, shippingCharged: 0, netEarnings: 0, inventoryValue: 0, soldActualValue: 0, soldEstimatedValue: 0 };
-                localStorage.removeItem(SALES_DATA_STORAGE_KEY); localStorage.removeItem(SOLD_ARTICLES_STORAGE_KEY); localStorage.removeItem(INVENTORY_DATA_STORAGE_KEY); localStorage.removeItem(PRODUCT_CATALOG_STORAGE_KEY);
-                cardmarketInput.value = ''; soldArticlesInput.value = ''; manaboxInput.value = ''; productCatalogInput.value = '';
-                updateFeedback(cardmarketFeedbackEl, '', 'info'); updateFeedback(soldArticlesFeedbackEl, '', 'info'); updateFeedback(manaboxFeedbackEl, '', 'info'); updateFeedback(productCatalogFeedbackEl, '', 'info');
-                inventoryFilterNameInput.value = ''; currentInventoryFilter.name = ''; currentInventorySort = { key: 'Name', direction: 'asc' };
+            if (confirm('Are you sure you want to clear ALL stored Sales and Sold Articles data? This cannot be undone.')) {
+                salesData = []; soldArticlesData = [];
+                calculatedTotals = { revenue: 0, fees: 0, shippingCharged: 0, netEarnings: 0 };
+                currentSoldItemsSort = { key: 'Set', direction: 'asc' }; currentTransactionSort = { key: 'ID', direction: 'desc' };
+                localStorage.removeItem(SALES_DATA_STORAGE_KEY); localStorage.removeItem(SOLD_ARTICLES_STORAGE_KEY);
+                cardmarketInput.value = ''; soldArticlesInput.value = '';
+                updateFeedback(cardmarketFeedbackEl, '', 'info'); updateFeedback(soldArticlesFeedbackEl, '', 'info');
                 updateAllCalculationsAndDisplays(); updateClearButtonState();
+                const firstTabButton = tabButtonsContainer.querySelector('.tab-button'); if (firstTabButton) { switchTab({ target: firstTabButton }); }
                 alert('All stored data cleared.'); console.log('All data cleared.');
             }
         }
 
+        // --- Modal Control Functions ---
+        function openModal(modalElement) { if (modalElement) modalElement.classList.add('active'); }
+        function closeModal(modalElement) { if (modalElement) modalElement.classList.remove('active'); }
+
+        /** Shows the transaction details modal with items in a table */
+        function showTransactionDetailsModal(transactionId) {
+            if (!transactionId || !soldArticlesData || soldArticlesData.length === 0) return;
+
+            const items = soldArticlesData.filter(item => item[SA_SHIPMENT_NR_COL] === transactionId);
+
+            // Link the title ID to the Cardmarket order page
+            const orderLink = `https://www.cardmarket.com/en/Magic/Orders/${transactionId}`;
+            transactionDetailsTitle.innerHTML = `Transaction Details: ID <a href="${orderLink}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 hover:underline">#${transactionId}</a>`;
+
+            transactionDetailsTableBody.innerHTML = ''; // Clear previous table rows
+            transactionDetailsEmptyMsg.classList.add('hidden'); // Hide empty message initially
+
+            if (items.length === 0) {
+                transactionDetailsEmptyMsg.classList.remove('hidden'); // Show empty message
+            } else {
+                items.forEach(item => {
+                    const row = transactionDetailsTableBody.insertRow();
+                    row.className = 'hover:bg-slate-50'; // Add hover effect
+
+                    const quantity = parseInt(item[SA_AMOUNT_COL] || '1', 10);
+                    const price = parseCurrency(item[SA_ARTICLE_VALUE_COL]);
+                    const name = item[SA_ARTICLE_NAME_COL] || 'Unknown';
+                    const set = item[SA_SET_NAME_COL] || 'Unknown Set';
+
+                    // Amount Cell
+                    const cellAmt = row.insertCell();
+                    cellAmt.className = 'px-2 py-1 whitespace-nowrap';
+                    cellAmt.textContent = quantity;
+
+                    // Card Name Cell (Linked)
+                    const cellName = row.insertCell();
+                    cellName.className = 'px-2 py-1 whitespace-nowrap';
+                    const cardSlug = generateSlug(name);
+                    const setSlug = generateSlug(set);
+                    const link = `https://www.cardmarket.com/en/Magic/Products/Singles/${setSlug}/${cardSlug}`;
+                    cellName.innerHTML = `<a href="${link}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 hover:underline">${formatCell(name)}</a>`;
+
+                    // Set Cell
+                    const cellSet = row.insertCell();
+                    cellSet.className = 'px-2 py-1 whitespace-nowrap';
+                    cellSet.textContent = set;
+
+                    // Price Cell
+                    const cellPrice = row.insertCell();
+                    cellPrice.className = 'px-2 py-1 whitespace-nowrap number-cell'; // Right align
+                    cellPrice.textContent = formatCurrency(price);
+                });
+            }
+
+            openModal(transactionDetailsModal);
+        }
+
+        /** Handles clicks within table bodies to potentially open the details modal */
+        function handleTableClick(event) {
+            const target = event.target.closest('[data-transaction-id]');
+            if (target) {
+                const transactionId = target.dataset.transactionId;
+                showTransactionDetailsModal(transactionId);
+            }
+        }
+
         // --- Tab Switching Logic ---
-        function switchTab(event) { const targetTabId = event.target.dataset.tab; if (!targetTabId) return; tabButtonsContainer.querySelectorAll('.tab-button').forEach(button => { button.classList.toggle('active', button.dataset.tab === targetTabId); }); tabContentContainer.querySelectorAll('.tab-content').forEach(content => { content.classList.toggle('active', content.id === targetTabId); }); }
+        function switchTab(event) {
+             const targetButton = event.target && event.target.closest ? event.target.closest('.tab-button') : event.target;
+             if (!targetButton || targetButton.classList.contains('active')) return;
+             const targetTabId = targetButton.dataset.tab; if (!targetTabId) return;
+             tabButtonsContainer.querySelectorAll('.tab-button').forEach(button => { button.classList.toggle('active', button.dataset.tab === targetTabId); });
+             tabContentContainer.querySelectorAll('.tab-content').forEach(content => { content.classList.toggle('active', content.id === targetTabId); });
+        }
+
 
         // --- Initialization ---
         function initialize() {
+            // Upload Modal listeners
+            openUploadModalButton.addEventListener('click', () => openModal(uploadModal));
+            closeUploadModalButton.addEventListener('click', () => closeModal(uploadModal));
+            modalDoneButton.addEventListener('click', () => closeModal(uploadModal));
+            uploadModal.addEventListener('click', (event) => { if (event.target === uploadModal) { closeModal(uploadModal); } }); // Click outside closes
+
+            // Transaction Details Modal listeners
+            closeDetailsModalButton.addEventListener('click', () => closeModal(transactionDetailsModal));
+            transactionDetailsModal.addEventListener('click', (event) => { if (event.target === transactionDetailsModal) { closeModal(transactionDetailsModal); } }); // Click outside closes
+
+            // File input listeners
             cardmarketInput.addEventListener('change', (e) => handleFileUpload(e, ';', 'sales', cardmarketFeedbackEl));
             soldArticlesInput.addEventListener('change', (e) => handleFileUpload(e, ';', 'soldArticles', soldArticlesFeedbackEl));
-            manaboxInput.addEventListener('change', (e) => handleFileUpload(e, ',', 'inventory', manaboxFeedbackEl));
-            productCatalogInput.addEventListener('change', (e) => handleFileUpload(e, '', 'catalog', productCatalogFeedbackEl));
+
+            // Clear data listener
             clearDataButton.addEventListener('click', clearAllData);
+
+            // Tab listener
             tabButtonsContainer.addEventListener('click', switchTab);
-            inventoryFilterNameInput.addEventListener('input', handleInventoryFilterInput);
-            loadSalesFromLocalStorage(); loadSoldArticlesFromLocalStorage(); loadInventoryFromLocalStorage(); loadProductCatalogFromLocalStorage();
-            updateAllCalculationsAndDisplays(); updateClearButtonState();
-            console.log('Sales Tracker Initialized.');
+
+            // Delegated click listeners for table IDs
+            transactionsTableBody.addEventListener('click', handleTableClick);
+            soldItemsTableBody.addEventListener('click', handleTableClick);
+
+            // Load existing data
+            loadSalesFromLocalStorage();
+            loadSoldArticlesFromLocalStorage();
+
+            // Initial UI update
+            updateAllCalculationsAndDisplays();
+            updateClearButtonState();
+
+            console.log('Sales Tracker Initialized (v23).'); // Updated version
         }
+
         document.addEventListener('DOMContentLoaded', initialize);
     </script>
 
