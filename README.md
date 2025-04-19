@@ -4,6 +4,8 @@ A simple, browser-based tool to analyze your Magic: The Gathering sales data exp
 
 **Live Tool:** [https://danmoreng.github.io/cardmarket-tracker/](https://danmoreng.github.io/cardmarket-tracker/)
 
+![Screenshot of the Site](./screenshots/example.png)
+
 ## What it Does
 
 This tool helps you visualize and understand your Cardmarket sales performance by processing the CSV files you can download from your Cardmarket account. It provides:
