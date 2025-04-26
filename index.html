@@ -7,619 +7,1799 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Custom scrollbar styling */
-        .custom-scrollbar::-webkit-scrollbar { height: 8px; width: 8px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background-color: #94a3b8; border-radius: 4px; border: 2px solid #f1f5f9; }
-        .custom-scrollbar { scrollbar-width: thin; scrollbar-color: #94a3b8 #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 8px;
+            width: 8px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background-color: #94a3b8;
+            border-radius: 4px;
+            border: 2px solid #f1f5f9;
+        }
+
+        .custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: #94a3b8 #f1f5f9;
+        }
 
         /* General Button Styles */
-        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
 
         /* File Input Button Styling */
-        input[type="file"]::-webkit-file-upload-button { color: #1e40af; background-color: #e0f2fe; padding: 0.5rem 1rem; border-radius: 0.375rem; border: 0; font-size: 0.875rem; font-weight: 600; margin-right: 1rem; cursor: pointer; transition: background-color 0.2s ease; }
-        input[type="file"]:hover::-webkit-file-upload-button { background-color: #dbeafe; }
-        input[type="file"]::file-selector-button { color: #1e40af; background-color: #e0f2fe; padding: 0.5rem 1rem; border-radius: 0.375rem; border: 0; font-size: 0.875rem; font-weight: 600; margin-right: 1rem; cursor: pointer; transition: background-color 0.2s ease; }
-        input[type="file"]:hover::file-selector-button { background-color: #dbeafe; }
+        input[type="file"]::-webkit-file-upload-button {
+            color: #1e40af;
+            background-color: #e0f2fe;
+            padding: .5rem 1rem;
+            border-radius: .375rem;
+            border: 0;
+            font-size: .875rem;
+            font-weight: 600;
+            margin-right: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        input[type="file"]:hover::-webkit-file-upload-button {
+            background-color: #dbeafe;
+        }
+
+        input[type="file"]::file-selector-button {
+            color: #1e40af;
+            background-color: #e0f2fe;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: 0;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-right: 1rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        input[type="file"]:hover::file-selector-button {
+            background-color: #dbeafe;
+        }
 
         /* Modal Styles */
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; }
-        .modal-overlay.active { opacity: 1; visibility: visible; }
-        .modal-content { background-color: white; padding: 1.5rem 2rem 2rem 2rem; border-radius: 0.5rem; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); width: 90%; max-width: 700px; /* Wider modal for table */ position: relative; max-height: 80vh; display: flex; flex-direction: column; }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 0.75rem;}
-        .modal-body { overflow-y: auto; /* Enable scroll for long lists */ flex-grow: 1; }
-        .modal-close-button { background: none; border: none; font-size: 1.75rem; line-height: 1; cursor: pointer; color: #64748b; padding: 0; }
-        .modal-close-button:hover { color: #1e293b; }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 1.5rem 2rem 2rem;
+            border-radius: .5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 700px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: .75rem;
+        }
+
+        .modal-body {
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+
+        .modal-close-button {
+            background: none;
+            border: none;
+            font-size: 1.75rem;
+            line-height: 1;
+            cursor: pointer;
+            color: #64748b;
+            padding: 0;
+        }
+
+        .modal-close-button:hover {
+            color: #1e293b;
+        }
 
         /* Tab Styles */
-        .tab-button { padding: 0.5rem 1rem; margin-right: 0.5rem; border-radius: 0.375rem 0.375rem 0 0; border: 1px solid transparent; border-bottom: none; cursor: pointer; background-color: #e2e8f0; color: #475569; transition: background-color 0.2s ease, color 0.2s ease; }
-        .tab-button.active { background-color: #ffffff; border-color: #e2e8f0; color: #1e293b; font-weight: 600; }
-        .tab-content { display: none; padding: 1.5rem; border: 1px solid #e2e8f0; border-radius: 0 0.5rem 0.5rem 0.5rem; background-color: #ffffff; }
-        .tab-content.active { display: block; }
+        .tab-button {
+            padding: .5rem 1rem;
+            margin-right: .5rem;
+            border-radius: .375rem .375rem 0 0;
+            border: 1px solid transparent;
+            border-bottom: none;
+            cursor: pointer;
+            background: #e2e8f0;
+            color: #475569;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
 
-        /* Sortable Table Header Styles */
-        th[data-sort-key] { cursor: pointer; user-select: none; position: relative; padding-right: 1.5rem; }
-        th[data-sort-key]:hover { background-color: #f1f5f9; }
-        th .sort-arrow { position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); font-size: 0.7em; color: #94a3b8; }
-        th .sort-arrow.asc::after { content: '▲'; }
-        th .sort-arrow.desc::after { content: '▼'; }
+        .tab-button.active {
+            background: #fff;
+            border-color: #e2e8f0;
+            color: #1e293b;
+            font-weight: 600;
+        }
 
-        /* Table Cell Alignment & Clickable ID*/
-        td.number-cell, th.number-header { text-align: right; }
-        td.center-cell, th.center-header { text-align: center; }
-        .clickable-id { cursor: pointer; color: #2563eb; text-decoration: underline; }
-        .clickable-id:hover { color: #1d4ed8; }
+        .tab-content {
+            display: none;
+            padding: 1.5rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0 .5rem .5rem .5rem;
+            background: #fff;
+        }
 
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Sortable Table Header */
+        th[data-sort-key] {
+            cursor: pointer;
+            user-select: none;
+            position: relative;
+            padding-right: 1.5rem;
+        }
+
+        th[data-sort-key]:hover {
+            background: #f1f5f9;
+        }
+
+        th .sort-arrow {
+            position: absolute;
+            right: .5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: .7em;
+            color: #94a3b8;
+        }
+
+        th .sort-arrow.asc::after {
+            content: '▲';
+        }
+
+        th .sort-arrow.desc::after {
+            content: '▼';
+        }
+
+        /* Table Cell Alignment & Clickable ID */
+        td.number-cell, th.number-header {
+            text-align: right;
+        }
+
+        td.center-cell, th.center-header {
+            text-align: center;
+        }
+
+        .clickable-id {
+            cursor: pointer;
+            color: #2563eb;
+            text-decoration: underline;
+        }
+
+        .clickable-id:hover {
+            color: #1d4ed8;
+        }
 
         /* Utility */
-        .hidden { display: none; }
-
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body class="bg-slate-100 font-sans text-slate-900">
+<div class="container mx-auto p-4 md:p-6 lg:p-8">
+    <header class="mb-8 text-center">
+        <h1 class="text-3xl md:text-4xl font-bold text-slate-800">Magic Card Sales Tracker</h1>
+        <p class="text-slate-600 mt-1">Upload Cardmarket CSVs to analyze sales.</p>
+    </header>
 
-    <div class="container mx-auto p-4 md:p-6 lg:p-8">
-        <header class="mb-8 text-center">
-            <h1 class="text-3xl md:text-4xl font-bold text-slate-800">Magic Card Sales Tracker</h1>
-            <p class="text-slate-600 mt-1">Upload Cardmarket CSVs to analyze sales.</p>
-        </header>
+    <main>
+        <section class="mb-6 flex flex-col sm:flex-row justify-center sm:justify-between items-center gap-4">
+            <button id="open-upload-modal-button"
+                    class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-150 ease-in-out text-sm font-medium shadow-sm">
+                Upload Sales Data
+            </button>
+            <div>
+                <button id="clear-data-button"
+                        class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-150 ease-in-out text-sm font-medium shadow-sm">
+                    Clear Stored Data
+                </button>
+                <p id="clear-data-feedback" class="text-xs text-slate-500 mt-1 text-center sm:text-right"></p>
+            </div>
+        </section>
 
-        <main>
-            <section class="mb-6 flex flex-col sm:flex-row justify-center sm:justify-between items-center gap-4">
-                 <button id="open-upload-modal-button" class="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-150 ease-in-out text-sm font-medium shadow-sm"> Upload Sales Data </button>
-                 <div>
-                    <button id="clear-data-button" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50 transition duration-150 ease-in-out text-sm font-medium shadow-sm"> Clear Stored Data </button>
-                    <p id="clear-data-feedback" class="text-xs text-slate-500 mt-1 text-center sm:text-right"></p>
-                 </div>
-            </section>
+        <section id="sales-summary-section"
+                 class="p-4 md:p-6 border border-slate-300 rounded-lg shadow-sm bg-white mb-6">
+            <h2 class="text-xl font-semibold mb-4 text-slate-800">Summary</h2>
+            <div id="summary-error"
+                 class="hidden mb-4 p-3 bg-red-100 border border-red-300 text-red-800 rounded-md text-sm"></div>
+            <div id="summary-content" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="p-3 bg-green-100 rounded-md border border-green-200"><p
+                        class="text-sm text-green-800 font-medium">Total Revenue</p>
+                    <p id="total-revenue" class="text-lg font-bold text-green-900">€0.00</p>
+                    <p class="text-xs text-green-700 mt-1">(CM Sales)</p></div>
+                <div class="p-3 bg-red-100 rounded-md border border-red-200"><p
+                        class="text-sm text-red-800 font-medium">Cardmarket Fees</p>
+                    <p id="total-fees" class="text-lg font-bold text-red-900">€0.00</p>
+                    <p class="text-xs text-red-700 mt-1">(CM Commissions)</p></div>
+                <div class="p-3 bg-yellow-100 rounded-md border border-yellow-200"><p
+                        class="text-sm text-yellow-800 font-medium">Shipping Charged</p>
+                    <p id="total-shipping" class="text-lg font-bold text-yellow-900">€0.00</p>
+                    <p class="text-xs text-yellow-700 mt-1">(Revenue - Item Val)</p></div>
+                <div class="p-3 bg-blue-100 rounded-md border border-blue-200"><p
+                        class="text-sm text-blue-800 font-medium">Net Earnings</p>
+                    <p id="net-earnings" class="text-lg font-bold text-blue-900">€0.00</p>
+                    <p class="text-xs text-blue-700 mt-1">(Item Value - Fees)</p></div>
+            </div>
+            <div id="summary-placeholder" class="text-slate-500">Upload CSVs via the button above to see the summary.
+            </div>
+        </section>
 
-            <section id="sales-summary-section" class="p-4 md:p-6 border border-slate-300 rounded-lg shadow-sm bg-white mb-6">
-                <h2 class="text-xl font-semibold mb-4 text-slate-800">Summary</h2>
-                <div id="summary-error" class="hidden mb-4 p-3 bg-red-100 border border-red-300 text-red-800 rounded-md text-sm"></div>
-                <div id="summary-content" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    <div class="p-3 bg-green-100 rounded-md border border-green-200"> <p class="text-sm text-green-800 font-medium">Total Revenue</p> <p id="total-revenue" class="text-lg font-bold text-green-900">€0.00</p> <p class="text-xs text-green-700 mt-1">(CM Sales)</p> </div>
-                    <div class="p-3 bg-red-100 rounded-md border border-red-200"> <p class="text-sm text-red-800 font-medium">Cardmarket Fees</p> <p id="total-fees" class="text-lg font-bold text-red-900">€0.00</p> <p class="text-xs text-red-700 mt-1">(CM Commissions)</p> </div>
-                    <div class="p-3 bg-yellow-100 rounded-md border border-yellow-200"> <p class="text-sm text-yellow-800 font-medium">Shipping Charged</p> <p id="total-shipping" class="text-lg font-bold text-yellow-900">€0.00</p> <p class="text-xs text-yellow-700 mt-1">(Revenue - Item Val)</p> </div>
-                    <div class="p-3 bg-blue-100 rounded-md border border-blue-200"> <p class="text-sm text-blue-800 font-medium">Net Earnings</p> <p id="net-earnings" class="text-lg font-bold text-blue-900">€0.00</p> <p class="text-xs text-blue-700 mt-1">(Item Value - Fees)</p> </div>
+        <section id="breakdowns-section" class="mb-6 p-4 bg-white border border-slate-300 rounded-lg shadow-sm">
+            <h2 class="text-xl font-semibold mb-4 text-slate-800">Breakdowns</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label for="month-filter" class="block text-sm font-medium text-slate-700 mb-1">Filter by
+                        Month</label>
+                    <select id="month-filter"
+                            class="block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-sm">
+                        <option value="">All Months</option>
+                    </select>
+                    <div class="overflow-x-auto custom-scrollbar mt-3 border border-slate-200 rounded-md">
+                        <table id="month-summary-table" class="min-w-full divide-y divide-slate-200 text-sm">
+                            <thead class="bg-slate-50">
+                            <tr>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    Month
+                                </th>
+                                <th class="px-3 py-2 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    Revenue
+                                </th>
+                                <th class="px-3 py-2 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    Fees
+                                </th>
+                                <th class="px-3 py-2 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    Shipping
+                                </th>
+                                <th class="px-3 py-2 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    Net Earn.
+                                </th>
+                                <th class="px-3 py-2 text-center text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    Txns
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-slate-200"></tbody>
+                        </table>
+                    </div>
                 </div>
-                 <div id="summary-placeholder" class="text-slate-500">Upload CSVs via the button above to see the summary.</div>
-            </section>
-
-            <section class="mb-6">
-                <div id="tab-buttons" class="border-b border-slate-200">
-                     <button class="tab-button active" data-tab="tab-transactions">Transactions</button> <button class="tab-button" data-tab="tab-sold-items">Sold Items List</button>
-                 </div>
-                 <div id="tab-content">
-                    <div id="tab-transactions" class="tab-content active">
-                         <h2 class="text-xl font-semibold mb-4 text-slate-800 sr-only">Transactions</h2>
-                         <div id="transactions-error" class="hidden mb-4 p-3 bg-red-100 border border-red-300 text-red-800 rounded-md text-sm"></div>
-                         <div id="transactions-table-container" class="overflow-x-auto custom-scrollbar">
-                             <table class="min-w-full divide-y divide-slate-200 border border-slate-200">
-                                 <thead id="transactions-table-head" class="bg-slate-50"></thead>
-                                 <tbody id="transactions-table-body" class="bg-white divide-y divide-slate-200"></tbody>
-                             </table>
-                         </div>
-                         <div id="transactions-placeholder" class="text-slate-500 py-4"> Upload Cardmarket Sales CSV and Sold Articles CSV to see transactions. </div>
-                    </div>
-                    <div id="tab-sold-items" class="tab-content">
-                        <h2 class="text-xl font-semibold mb-4 text-slate-800 sr-only">Sold Items List</h2>
-                        <div id="sold-items-error" class="hidden mb-4 p-3 bg-red-100 border border-red-300 text-red-800 rounded-md text-sm"></div>
-                        <div id="sold-items-table-container" class="overflow-x-auto custom-scrollbar">
-                             <table class="min-w-full divide-y divide-slate-200 border border-slate-200">
-                                 <thead id="sold-items-table-head" class="bg-slate-50"></thead>
-                                 <tbody id="sold-items-table-body" class="bg-white divide-y divide-slate-200"></tbody>
-                             </table>
-                         </div>
-                         <div id="sold-items-placeholder" class="text-slate-500 mt-4"> Upload Sold Articles CSV to see the list of sold items. </div>
+                <div>
+                    <label for="set-filter" class="block text-sm font-medium text-slate-700 mb-1">Filter by
+                        Expansion</label>
+                    <select id="set-filter"
+                            class="block w-full rounded-md border-slate-300 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 text-sm">
+                        <option value="">All Sets</option>
+                    </select>
+                    <div class="overflow-x-auto custom-scrollbar mt-3 border border-slate-200 rounded-md">
+                        <table id="set-summary-table" class="min-w-full divide-y divide-slate-200 text-sm">
+                            <thead class="bg-slate-50">
+                            <tr>
+                                <th class="px-3 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    Set
+                                </th>
+                                <th class="px-3 py-2 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    Cards Sold
+                                </th>
+                                <th class="px-3 py-2 text-right text-xs font-medium text-slate-500 uppercase tracking-wider">
+                                    Revenue
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-slate-200"></tbody>
+                        </table>
                     </div>
                 </div>
-            </section>
+            </div>
+        </section>
 
-        </main>
-
-        <footer class="mt-12 text-center text-xs text-slate-500"> <p>Data is stored locally in your browser using Local Storage.</p> </footer>
-    </div>
-
-    <div id="upload-modal" class="modal-overlay">
-        <div class="modal-content">
-             <div class="modal-header">
-                <h2 class="text-xl font-semibold text-slate-800">Upload Cardmarket Data</h2>
-                <button id="close-upload-modal-button" class="modal-close-button" aria-label="Close upload modal">&times;</button>
-             </div>
-             <div class="modal-body">
-                <div class="space-y-4">
-                    <div class="p-4 border border-slate-300 rounded-lg shadow-sm bg-white">
-                        <label for="cardmarket-csv" class="block text-sm font-medium text-slate-700 mb-2">1. Sales CSV</label>
-                        <input id="cardmarket-csv" type="file" accept=".csv" class="block w-full text-sm text-slate-600 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        <div id="cardmarket-feedback" class="text-xs mt-1"></div>
+        <section class="mb-6">
+            <div id="tab-buttons" class="border-b border-slate-200">
+                <button class="tab-button active" data-tab="tab-transactions">Transactions</button>
+                <button class="tab-button" data-tab="tab-sold-items">Sold Items List</button>
+            </div>
+            <div id="tab-content">
+                <div id="tab-transactions" class="tab-content active">
+                    <h2 class="text-xl font-semibold mb-4 text-slate-800 sr-only">Transactions</h2>
+                    <div id="transactions-error"
+                         class="hidden mb-4 p-3 bg-red-100 border border-red-300 text-red-800 rounded-md text-sm"></div>
+                    <div id="transactions-table-container" class="overflow-x-auto custom-scrollbar">
+                        <table class="min-w-full divide-y divide-slate-200 border border-slate-200">
+                            <thead id="transactions-table-head" class="bg-slate-50"></thead>
+                            <tbody id="transactions-table-body" class="bg-white divide-y divide-slate-200"></tbody>
+                        </table>
                     </div>
-                    <div class="p-4 border border-slate-300 rounded-lg shadow-sm bg-white">
-                        <label for="sold-articles-csv" class="block text-sm font-medium text-slate-700 mb-2">2. Sold Articles CSV</label>
-                        <input id="sold-articles-csv" type="file" accept=".csv" class="block w-full text-sm text-slate-600 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        <div id="sold-articles-feedback" class="text-xs mt-1"></div>
+                    <div id="transactions-placeholder" class="text-slate-500 py-4"> Upload Cardmarket Sales CSV and Sold
+                        Articles CSV to see transactions.
                     </div>
                 </div>
-             </div>
-            <div class="mt-4 pt-4 border-t border-slate-200 text-right">
-                 <button id="modal-done-button" class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-150 ease-in-out text-sm font-medium shadow-sm"> Done </button>
+                <div id="tab-sold-items" class="tab-content">
+                    <h2 class="text-xl font-semibold mb-4 text-slate-800 sr-only">Sold Items List</h2>
+                    <div id="sold-items-error"
+                         class="hidden mb-4 p-3 bg-red-100 border border-red-300 text-red-800 rounded-md text-sm"></div>
+                    <div id="sold-items-table-container" class="overflow-x-auto custom-scrollbar">
+                        <table class="min-w-full divide-y divide-slate-200 border border-slate-200">
+                            <thead id="sold-items-table-head" class="bg-slate-50"></thead>
+                            <tbody id="sold-items-table-body" class="bg-white divide-y divide-slate-200"></tbody>
+                        </table>
+                    </div>
+                    <div id="sold-items-placeholder" class="text-slate-500 mt-4"> Upload Sold Articles CSV to see the
+                        list of sold items.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="mt-12 text-center text-xs text-slate-500">
+        <p>Data is now stored in IndexedDB for better performance and capacity.</p>
+    </footer>
+</div>
+
+<div id="upload-modal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 class="text-xl font-semibold text-slate-800">Upload Cardmarket Data</h2>
+            <button id="close-upload-modal-button" class="modal-close-button" aria-label="Close upload modal">&times;
+            </button>
+        </div>
+        <div class="modal-body space-y-4">
+            <div class="p-4 border border-slate-300 rounded-lg shadow-sm bg-white">
+                <label for="cardmarket-csv" class="block text-sm font-medium text-slate-700 mb-2">1. Sales CSV</label>
+                <input id="cardmarket-csv" type="file" accept=".csv"
+                       class="block w-full text-sm text-slate-600 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                <div id="cardmarket-feedback" class="text-xs mt-1"></div>
+            </div>
+            <div class="p-4 border border-slate-300 rounded-lg shadow-sm bg-white">
+                <label for="sold-articles-csv" class="block text-sm font-medium text-slate-700 mb-2">2. Sold Articles
+                    CSV</label>
+                <input id="sold-articles-csv" type="file" accept=".csv"
+                       class="block w-full text-sm text-slate-600 border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500">
+                <div id="sold-articles-feedback" class="text-xs mt-1"></div>
             </div>
         </div>
-    </div>
-
-    <div id="transaction-details-modal" class="modal-overlay">
-        <div class="modal-content">
-             <div class="modal-header">
-                <h2 id="transaction-details-title" class="text-xl font-semibold text-slate-800">Transaction Details</h2>
-                <button id="close-details-modal-button" class="modal-close-button" aria-label="Close details modal">&times;</button>
-             </div>
-             <div id="transaction-details-body-content" class="modal-body text-sm">
-                 <table class="min-w-full text-sm mb-4">
-                     <thead class="bg-slate-50">
-                         <tr>
-                             <th class="px-2 py-1 text-left text-xs font-medium text-slate-500 uppercase tracking-wider w-1/12">Amt</th>
-                             <th class="px-2 py-1 text-left text-xs font-medium text-slate-500 uppercase tracking-wider w-5/12">Card Name</th>
-                             <th class="px-2 py-1 text-left text-xs font-medium text-slate-500 uppercase tracking-wider w-4/12">Set</th>
-                             <th class="px-2 py-1 text-right text-xs font-medium text-slate-500 uppercase tracking-wider w-2/12">Price</th>
-                         </tr>
-                     </thead>
-                     <tbody id="transaction-details-table-body" class="divide-y divide-slate-200">
-                         </tbody>
-                 </table>
-                 <p id="transaction-details-empty" class="text-slate-500 hidden">No article details found for this transaction in the Sold Articles CSV.</p>
-             </div>
+        <div class="mt-4 pt-4 border-t border-slate-200 text-right">
+            <button id="modal-done-button"
+                    class="px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50 transition duration-150 ease-in-out text-sm font-medium shadow-sm">
+                Done
+            </button>
         </div>
     </div>
+</div>
+
+<div id="transaction-details-modal" class="modal-overlay">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2 id="transaction-details-title" class="text-xl font-semibold text-slate-800">Transaction Details</h2>
+            <button id="close-details-modal-button" class="modal-close-button" aria-label="Close details modal">
+                &times;
+            </button>
+        </div>
+        <div id="transaction-details-body-content" class="modal-body text-sm">
+            <table class="min-w-full text-sm mb-4">
+                <thead class="bg-slate-50">
+                <tr>
+                    <th class="px-2 py-1 text-left text-xs font-medium text-slate-500 uppercase tracking-wider w-1/12">
+                        Amt
+                    </th>
+                    <th class="px-2 py-1 text-left text-xs font-medium text-slate-500 uppercase tracking-wider w-5/12">
+                        Card Name
+                    </th>
+                    <th class="px-2 py-1 text-left text-xs font-medium text-slate-500 uppercase tracking-wider w-4/12">
+                        Set
+                    </th>
+                    <th class="px-2 py-1 text-right text-xs font-medium text-slate-500 uppercase tracking-wider w-2/12">
+                        Price
+                    </th>
+                </tr>
+                </thead>
+                <tbody id="transaction-details-table-body" class="divide-y divide-slate-200">
+                </tbody>
+            </table>
+            <p id="transaction-details-empty" class="text-slate-500 hidden">No article details found for this
+                transaction in the Sold Articles CSV.</p>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+    import {openDB} from 'https://cdn.jsdelivr.net/npm/idb@7/+esm';
+
+    // --- IndexedDB Initialization ---
+    // --- IndexedDB Initialization ---
+    const dbPromise = openDB('magic-sales-tracker', 1, { // <-- Keep version 1
+        upgrade(db) {
+            console.log('Initializing IndexedDB version 1...'); // Log initial setup
+            // Setup 'sales' store
+            if (!db.objectStoreNames.contains('sales')) {
+                const store = db.createObjectStore('sales', { keyPath: CM_REF_COLUMN });
+                // Create index on the NEW numeric timestamp property
+                store.createIndex('by-date', 'datePaidTimestamp'); // <-- Use the new valid property name
+                console.log('Created "sales" object store and by-date index.');
+            }
+            // Setup 'articles' store
+            if (!db.objectStoreNames.contains('articles')) {
+                db.createObjectStore('articles', { keyPath: SA_SHIPMENT_NR_COL });
+                console.log('Created "articles" object store.');
+            }
+        },
+        blocked() {
+            console.error("IndexedDB blocked; please close other tabs using this application.");
+            alert("The application database is blocked by another open tab. Please close other instances and reload.");
+        },
+    });
+
+    const SALES_STORE = 'sales';
+    const ARTICLES_STORE = 'articles'; // Sticking with this name
+
+    // --- State Variables ---
+    let salesData = []; // Array of sales transaction objects
+    let soldArticlesData = []; // Array of individual sold article objects
+    let currentTransactionSort = {key: 'ID', direction: 'desc'};
+    let currentSoldItemsSort = {key: 'Set', direction: 'asc'};
+    let calculatedTotals = {revenue: 0, fees: 0, shippingCharged: 0, netEarnings: 0};
+
+    // --- Constants ---
+    // CM Sales object property names (after remapFields)
+    const CM_REF_COLUMN       = 'reference';
+    const CM_CATEGORY_COLUMN  = 'category';
+    const CM_TYPE_COLUMN      = 'type';
+    const CM_AMOUNT_COLUMN    = 'amount';
+    const CM_DATE_PAID_COL    = 'datePaid';
+    // Sold Articles object property names (after remapFields)
+    const SA_SHIPMENT_NR_COL  = 'shipmentNr';
+    const SA_ARTICLE_NAME_COL = 'articleName';
+    const SA_PRODUCT_ID_COL   = 'productId';
+    const SA_SET_NAME_COL     = 'setName';
+    const SA_AMOUNT_COL       = 'quantity';
+    const SA_ARTICLE_VALUE_COL= 'articleValue';
 
 
-    <script>
-        // --- Constants ---
-        const SALES_DATA_STORAGE_KEY = 'magicCardmarketSalesData_html_v23'; // Updated version
-        const SOLD_ARTICLES_STORAGE_KEY = 'magicSoldArticlesData_html_v23'; // Updated version
-        // CM Sales Columns
-        const CM_REF_COLUMN = 'Reference'; const CM_CATEGORY_COLUMN = 'Category'; const CM_TYPE_COLUMN = 'Type'; const CM_AMOUNT_COLUMN = 'Amount';
-        const CM_DATE_PAID_COL = 'Date Paid';
-        // Sold Articles Columns
-        const SA_SHIPMENT_NR_COL = 'Shipment nr.';
-        const SA_ARTICLE_NAME_COL = 'Article';
-        const SA_PRODUCT_ID_COL = 'Product ID';
-        const SA_SET_NAME_COL = 'Expansion';
-        const SA_AMOUNT_COL = 'Amount';
-        const SA_ARTICLE_VALUE_COL = 'Article Value';
+    // map raw sales CSV headers → valid JS keys
+    const SALES_FIELD_MAP = {
+        'Reference':     'reference',
+        'Category':      'category',
+        'Type':          'type',
+        'Amount':        'amount',       // sales total
+        'Date Paid':     'datePaid',
+    };
 
-        // --- State Variables ---
-        let salesData = [];
-        let soldArticlesData = [];
-        let calculatedTotals = { revenue: 0, fees: 0, shippingCharged: 0, netEarnings: 0 };
-        let currentSoldItemsSort = { key: 'Set', direction: 'asc' };
-        let currentTransactionSort = { key: 'ID', direction: 'desc' };
+    // map raw articles CSV headers → valid JS keys
+    const ARTICLES_FIELD_MAP = {
+        'Shipment nr.':  'shipmentNr',
+        'Article':       'articleName',
+        'Product ID':    'productId',
+        'Expansion':     'setName',
+        'Amount':        'quantity',     // count of that article
+        'Article Value': 'articleValue',
+    };
 
-        // --- DOM Element References ---
-        const uploadModal = document.getElementById('upload-modal');
-        const openUploadModalButton = document.getElementById('open-upload-modal-button');
-        const closeUploadModalButton = document.getElementById('close-upload-modal-button');
-        const modalDoneButton = document.getElementById('modal-done-button');
-        const cardmarketInput = document.getElementById('cardmarket-csv');
-        const soldArticlesInput = document.getElementById('sold-articles-csv');
-        const cardmarketFeedbackEl = document.getElementById('cardmarket-feedback');
-        const soldArticlesFeedbackEl = document.getElementById('sold-articles-feedback');
-        const clearDataButton = document.getElementById('clear-data-button');
-        const clearDataFeedbackEl = document.getElementById('clear-data-feedback');
-        const summaryContentEl = document.getElementById('summary-content');
-        const summaryPlaceholderEl = document.getElementById('summary-placeholder');
-        const summaryErrorEl = document.getElementById('summary-error');
-        const totalRevenueEl = document.getElementById('total-revenue');
-        const totalFeesEl = document.getElementById('total-fees');
-        const totalShippingEl = document.getElementById('total-shipping');
-        const netEarningsEl = document.getElementById('net-earnings');
-        const tabButtonsContainer = document.getElementById('tab-buttons');
-        const tabContentContainer = document.getElementById('tab-content');
-        const transactionsTableContainer = document.getElementById('transactions-table-container');
-        const transactionsTableHead = document.getElementById('transactions-table-head');
-        const transactionsTableBody = document.getElementById('transactions-table-body');
-        const transactionsPlaceholder = document.getElementById('transactions-placeholder');
-        const transactionsError = document.getElementById('transactions-error');
-        const soldItemsTableContainer = document.getElementById('sold-items-table-container');
-        const soldItemsTableHead = document.getElementById('sold-items-table-head');
-        const soldItemsTableBody = document.getElementById('sold-items-table-body');
-        const soldItemsPlaceholder = document.getElementById('sold-items-placeholder');
-        const soldItemsError = document.getElementById('sold-items-error');
-        const transactionDetailsModal = document.getElementById('transaction-details-modal');
-        const transactionDetailsTitle = document.getElementById('transaction-details-title');
-        const transactionDetailsTableBody = document.getElementById('transaction-details-table-body');
-        const transactionDetailsEmptyMsg = document.getElementById('transaction-details-empty');
-        const closeDetailsModalButton = document.getElementById('close-details-modal-button');
+    function remapFields(rawArray, fieldMap) {
+        return rawArray.map(raw => {
+            const o = {};
+            for (const [csvKey, propName] of Object.entries(fieldMap)) {
+                o[propName] = raw[csvKey];
+            }
+            return o;
+        });
+    }
 
 
-        // --- Helper Functions ---
-        function normalizeString(str) { if (typeof str !== 'string') return ''; return str.trim().toLowerCase(); }
-        function parseCurrency(value) { if (value === null || value === undefined || value === '') return 0; let s = String(value).replace(/[€$£¥\s]/g, '').replace(',', '.'); const n = parseFloat(s); return isNaN(n) ? 0 : n; }
-        function formatCell(value) { if (value === null || value === undefined) return ''; return String(value); }
-        function formatCurrency(value) { return `€${Number(value).toFixed(2)}`; }
-        function formatDate(dateString) { if (!dateString) return ''; try { const date = new Date(dateString.replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1')); if (isNaN(date.getTime())) return dateString; return date.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }); } catch (e) { return dateString; } }
-        function updateFeedback(el, msg, type = 'info') { el.textContent = msg; el.className = 'text-xs mt-1'; if (type === 'success') el.classList.add('text-green-700'); else if (type === 'error') el.classList.add('text-red-600'); else el.classList.add('text-slate-600'); }
-        function parseCSV(csvText, delimiter) { if (!csvText || typeof csvText !== 'string') { console.error("parseCSV: Input must be a non-empty string."); return null; } if (!delimiter || typeof delimiter !== 'string' || delimiter.length !== 1) { console.error("parseCSV: Delimiter must be a single character."); return null; } try { const lines = csvText.trim().split(/\r?\n/); if (lines.length < 2) return []; const headers = lines[0].split(delimiter).map(h => h.trim().replace(/^"(.*)"$/, '$1')); const results = []; for (let i = 1; i < lines.length; i++) { const line = lines[i].trim(); if (line === '') continue; const values = []; let currentValue = ''; let inQuotes = false; for (let j = 0; j < line.length; j++) { const char = line[j]; if (char === '"' && line[j-1] !== '"' && line[j+1] !== '"') { inQuotes = !inQuotes; } else if (char === delimiter && !inQuotes) { values.push(currentValue.trim().replace(/^"(.*)"$/, '$1').replace(/""/g, '"')); currentValue = ''; } else { currentValue += char; } } values.push(currentValue.trim().replace(/^"(.*)"$/, '$1').replace(/""/g, '"')); if (values.length === headers.length) { const entry = {}; for (let k = 0; k < headers.length; k++) { const headerKey = headers[k] || `unknown_header_${k}`; entry[headerKey] = values[k]; } results.push(entry); } else { console.warn(`Skipping row ${i + 1}: Value count (${values.length}) != Header count (${headers.length}). Line: "${line}"`); } } return results; } catch (error) { console.error("Error during custom CSV parsing:", error); return null; } }
-        function generateSlug(text) { if (typeof text !== 'string') return ''; return text .toLowerCase() .trim() .replace(/[:\/']/g, '') .replace(/[\s&()]+/g, '-') .replace(/[^\w-]+/g, '') .replace(/--+/g, '-') .replace(/^-+/, '') .replace(/-+$/, ''); }
+    // --- DOM Element References ---
+    const uploadModal = document.getElementById('upload-modal');
+    const openUploadModalButton = document.getElementById('open-upload-modal-button');
+    const closeUploadModalButton = document.getElementById('close-upload-modal-button');
+    const modalDoneButton = document.getElementById('modal-done-button');
+    const cardmarketInput = document.getElementById('cardmarket-csv');
+    const soldArticlesInput = document.getElementById('sold-articles-csv');
+    const cardmarketFeedbackEl = document.getElementById('cardmarket-feedback');
+    const soldArticlesFeedbackEl = document.getElementById('sold-articles-feedback');
+    const clearDataButton = document.getElementById('clear-data-button');
+    const clearDataFeedbackEl = document.getElementById('clear-data-feedback');
+    const summaryContentEl = document.getElementById('summary-content');
+    const summaryPlaceholderEl = document.getElementById('summary-placeholder');
+    const summaryErrorEl = document.getElementById('summary-error');
+    const totalRevenueEl = document.getElementById('total-revenue');
+    const totalFeesEl = document.getElementById('total-fees');
+    const totalShippingEl = document.getElementById('total-shipping');
+    const netEarningsEl = document.getElementById('net-earnings');
+    const tabButtonsContainer = document.getElementById('tab-buttons');
+    const tabContentContainer = document.getElementById('tab-content');
+    const transactionsTableContainer = document.getElementById('transactions-table-container');
+    const transactionsTableHead = document.getElementById('transactions-table-head');
+    const transactionsTableBody = document.getElementById('transactions-table-body');
+    const transactionsPlaceholder = document.getElementById('transactions-placeholder');
+    const transactionsError = document.getElementById('transactions-error');
+    const soldItemsTableContainer = document.getElementById('sold-items-table-container');
+    const soldItemsTableHead = document.getElementById('sold-items-table-head');
+    const soldItemsTableBody = document.getElementById('sold-items-table-body');
+    const soldItemsPlaceholder = document.getElementById('sold-items-placeholder');
+    const soldItemsError = document.getElementById('sold-items-error');
+    const transactionDetailsModal = document.getElementById('transaction-details-modal');
+    const transactionDetailsTitle = document.getElementById('transaction-details-title');
+    const transactionDetailsTableBody = document.getElementById('transaction-details-table-body');
+    const transactionDetailsEmptyMsg = document.getElementById('transaction-details-empty');
+    const closeDetailsModalButton = document.getElementById('close-details-modal-button');
+    // New DOM refs for breakdowns
+    const monthFilterSelect = document.getElementById('month-filter');
+    const monthSummaryTableBody = document.querySelector('#month-summary-table tbody');
+    const setFilterSelect = document.getElementById('set-filter');
+    const setSummaryTableBody = document.querySelector('#set-summary-table tbody');
 
 
-        // --- Core Logic Functions ---
-        function handleFileUpload(event, delimiter, dataType, feedbackEl) {
-            updateFeedback(feedbackEl, 'Reading file...', 'info');
-            const file = event.target.files ? event.target.files[0] : null;
-            const inputElement = event.target;
-            if (!file) { updateFeedback(feedbackEl, '', 'info'); return; }
-            const fileName = file.name;
-            updateFeedback(feedbackEl, `Reading ${fileName}...`, 'info');
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const fileContent = e.target.result;
-                let needsFullUpdate = false;
-                const expectedExtension = '.csv';
-                if (!fileName.toLowerCase().endsWith(expectedExtension)) { updateFeedback(feedbackEl, `Invalid file type (expected ${expectedExtension}).`, 'error'); inputElement.value = ''; return; }
-                updateFeedback(feedbackEl, `Parsing ${fileName}...`, 'info');
-                const parsedData = parseCSV(fileContent, delimiter);
-                if (parsedData === null) { updateFeedback(feedbackEl, `Error parsing ${fileName}. Check console.`, 'error'); inputElement.value = ''; return; }
-                const rowCount = parsedData.length;
-                updateFeedback(feedbackEl, `Loaded ${fileName} (${rowCount} data rows).`, 'success');
-                if (dataType === 'sales') { salesData = parsedData; saveSalesToLocalStorage(); needsFullUpdate = true; }
-                else if (dataType === 'soldArticles') { soldArticlesData = parsedData; saveSoldArticlesToLocalStorage(); needsFullUpdate = true; }
-                if (needsFullUpdate) { updateAllCalculationsAndDisplays(); }
+    // --- Helper Functions ---
+    function normalizeString(str) {
+        if (typeof str !== 'string') return '';
+        return str.trim().toLowerCase();
+    }
+
+    function parseCurrency(value) {
+        if (value === null || value === undefined || value === '') return 0;
+        let s = String(value).replace(/[€$£¥\s]/g, '').replace(',', '.');
+        const n = parseFloat(s);
+        return isNaN(n) ? 0 : n;
+    }
+
+    function formatCell(value) {
+        if (value === null || value === undefined) return '';
+        return String(value);
+    }
+
+    function formatCurrency(value) {
+        return `€${Number(value).toFixed(2)}`;
+    }
+
+    function formatDate(dateString) {
+        if (!dateString) return '';
+        try {
+            const date = new Date(dateString.replace(/(\d{2})\.(\d{2})\.(\d{4})/, '$3-$2-$1'));
+            if (isNaN(date.getTime())) return dateString;
+            return date.toLocaleDateString(undefined, {year: 'numeric', month: 'short', day: 'numeric'});
+        } catch (e) {
+            return dateString;
+        }
+    }
+
+    function updateFeedback(el, msg, type = 'info') {
+        el.textContent = msg;
+        el.className = 'text-xs mt-1';
+        if (type === 'success') el.classList.add('text-green-700'); else if (type === 'error') el.classList.add('text-red-600'); else el.classList.add('text-slate-600');
+    }
+
+    function parseCSV(csvText, delimiter) {
+        if (!csvText || typeof csvText !== 'string') {
+            console.error("parseCSV: Input must be a non-empty string.");
+            return null;
+        }
+        if (!delimiter || typeof delimiter !== 'string' || delimiter.length !== 1) {
+            console.error("parseCSV: Delimiter must be a single character.");
+            return null;
+        }
+        try {
+            const lines = csvText.trim().split(/\r?\n/);
+            if (lines.length < 2) return [];
+            const headers = lines[0].split(delimiter).map(h => h.trim().replace(/^"(.*)"$/, '$1'));
+            const results = [];
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (line === '') continue;
+                const values = [];
+                let currentValue = '';
+                let inQuotes = false;
+                for (let j = 0; j < line.length; j++) {
+                    const char = line[j];
+                    if (char === '"' && line[j - 1] !== '"' && line[j + 1] !== '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === delimiter && !inQuotes) {
+                        values.push(currentValue.trim().replace(/^"(.*)"$/, '$1').replace(/""/g, '"'));
+                        currentValue = '';
+                    } else {
+                        currentValue += char;
+                    }
+                }
+                values.push(currentValue.trim().replace(/^"(.*)"$/, '$1').replace(/""/g, '"'));
+                if (values.length === headers.length) {
+                    const entry = {};
+                    for (let k = 0; k < headers.length; k++) {
+                        const headerKey = headers[k] || `unknown_header_${k}`;
+                        entry[headerKey] = values[k];
+                    }
+                    results.push(entry);
+                } else {
+                    console.warn(`Skipping row ${i + 1}: Value count (${values.length}) != Header count (${headers.length}). Line: "${line}"`);
+                }
+            }
+            return results;
+        } catch (error) {
+            console.error("Error during custom CSV parsing:", error);
+            return null;
+        }
+    }
+
+    function generateSlug(text) {
+        if (typeof text !== 'string') return '';
+        return text.toLowerCase().trim().replace(/[:\/']/g, '') // Remove problematic chars
+            .replace(/[\s&()]+/g, '-') // Replace spaces, &, parentheses with hyphens
+            .replace(/[^\w-]+/g, '') // Remove all non-word chars except hyphens
+            .replace(/--+/g, '-') // Replace multiple hyphens with single
+            .replace(/^-+/, '') // Trim hyphens from start
+            .replace(/-+$/, '');
+    }
+
+    // Trim hyphens from end
+    function validateColumns(data, requiredCols, csvName, errorElement) {
+        if (!data || data.length === 0) return true; // No data, no validation needed
+        const firstRow = data[0];
+        if (!firstRow) return true;
+        const foundHeaders = Object.keys(firstRow);
+        const missingCols = requiredCols.filter(col => !foundHeaders.includes(col));
+        if (missingCols.length > 0) {
+            const errorMsg = `Required columns missing in ${csvName} CSV: ${missingCols.join(', ')}. Views using this data may be incomplete or fail.`;
+            console.error("Validation Error:", errorMsg, "Expected:", requiredCols, "Found:", foundHeaders);
+            if (errorElement) {
+                const existingError = errorElement.textContent;
+                // Avoid adding duplicate error messages
+                if (!existingError.includes(errorMsg)) {
+                    errorElement.textContent = existingError ? `${existingError}\n${errorMsg}` : errorMsg;
+                }
+                errorElement.classList.remove('hidden');
+            }
+            return false;
+        }
+        // Clear previous validation errors for *this* CSV if columns are now present
+        if (errorElement && !errorElement.classList.contains('hidden')) {
+            const errorMsgPattern = `Required columns missing in ${csvName} CSV:.*?(\n|$)`;
+            const regex = new RegExp(errorMsgPattern, 'g');
+            const currentError = errorElement.textContent;
+            const newError = currentError.replace(regex, '').trim();
+            errorElement.textContent = newError;
+            if (!newError) { // Hide if no errors remain
+                errorElement.classList.add('hidden');
+            }
+        }
+        return true;
+    }
+
+    function getGroupedData() {
+        // Groups data from the global salesData and soldArticlesData arrays
+        const salesAmountByRef = {}; // { ref: amount }
+        const feesByRef = {};       // { ref: amount }
+        const dateByRef = {};       // { ref: dateString }
+        const articlesByShipment = {}; // { shipmentNr: [ {name, value, set, quantity, productId}, ... ] }
+
+        salesData.forEach(t => {
+            const ref = t[CM_REF_COLUMN];
+            if (!ref) return; // Skip rows without reference
+            const cat = t[CM_CATEGORY_COLUMN];
+            const type = t[CM_TYPE_COLUMN];
+            const amt = parseCurrency(t[CM_AMOUNT_COLUMN]);
+            const datePaid = t[CM_DATE_PAID_COL];
+
+            if (cat === 'Sales' && type === 'Sales') {
+                salesAmountByRef[ref] = amt;
+                if (datePaid) { // Store date only if available
+                    dateByRef[ref] = datePaid;
+                }
+            } else if (cat === 'Fees' && type === 'Commissions') {
+                feesByRef[ref] = Math.abs(amt); // Store fees as positive
+            }
+        });
+
+        soldArticlesData.forEach(a => {
+            const shipNr = a[SA_SHIPMENT_NR_COL];
+            if (!shipNr) return; // Skip rows without shipment number
+            const articleValue = parseCurrency(a[SA_ARTICLE_VALUE_COL]);
+            const quantity = parseInt(a[SA_AMOUNT_COL] || '1', 10);
+            const name = a[SA_ARTICLE_NAME_COL] || 'Unknown';
+            const set = a[SA_SET_NAME_COL] || 'Unknown Set';
+            const productId = a[SA_PRODUCT_ID_COL] || ''; // Get Product ID too
+
+            if (!articlesByShipment[shipNr]) {
+                articlesByShipment[shipNr] = [];
+            }
+            articlesByShipment[shipNr].push({name, value: articleValue, set, quantity, productId});
+        });
+
+        return {salesAmountByRef, feesByRef, dateByRef, articlesByShipment};
+    }
+
+    // --- IndexedDB Helper Functions ---
+    async function saveToStore(storeName, records) {
+        const db = await dbPromise;
+        const tx = db.transaction(storeName, 'readwrite');
+        const store = tx.objectStore(storeName);
+        // Use put for automatic insert/update based on keyPath
+        // Note: For 'articles' store, if multiple records have the same SA_SHIPMENT_NR_COL,
+        // later records will overwrite earlier ones with the same key.
+        // This assumes we reload ALL relevant articles when processing.
+        const putPromises = records.map(rec => store.put(rec));
+        await Promise.all(putPromises); // Wait for all put operations
+        await tx.done; // Wait for transaction to complete
+        console.log(`Saved ${records.length} records to ${storeName}.`);
+    }
+
+    async function loadAllFromStore(storeName) {
+        try {
+            const db = await dbPromise;
+            const data = await db.getAll(storeName);
+            console.log(`Loaded ${data.length} records from ${storeName}.`);
+            return data;
+        } catch (error) {
+            console.error(`Error loading data from ${storeName}:`, error);
+            return []; // Return empty array on error
+        }
+    }
+
+    async function clearStore(storeName) {
+        const db = await dbPromise;
+        const tx = db.transaction(storeName, 'readwrite');
+        tx.objectStore(storeName).clear();
+        await tx.done;
+        console.log(`Cleared store: ${storeName}`);
+    }
+
+    /** Merges new data into existing data, preventing duplicates based on a unique key. */
+    function mergeData(existingData, incomingData, uniqueKey) {
+        const dataMap = new Map();
+
+        // Add existing data to the map
+        existingData.forEach(item => {
+            const key = item[uniqueKey];
+            if (key) { // Ensure the key exists
+                dataMap.set(key, item);
+            } else {
+                console.warn("Existing item missing unique key:", uniqueKey, item);
+            }
+        });
+
+        // Add or update with incoming data
+        incomingData.forEach(item => {
+            const key = item[uniqueKey];
+            if (key) { // Ensure the key exists
+                dataMap.set(key, item); // Overwrites if key already exists
+            } else {
+                console.warn("Incoming item missing unique key:", uniqueKey, item);
+            }
+        });
+
+        return Array.from(dataMap.values());
+    }
+
+    // --- Core Logic Functions (Modified for Async/IDB) ---
+
+    async function handleFileUpload(event, delimiter, dataType, feedbackEl) {
+        updateFeedback(feedbackEl, 'Reading file...', 'info');
+        const inputElement = event.target;
+        const file = inputElement.files ? inputElement.files[0] : null;
+
+        if (!file) {
+            updateFeedback(feedbackEl, '', 'info');
+            return;
+        }
+
+        const fileName = file.name;
+        if (!fileName.toLowerCase().endsWith('.csv')) {
+            updateFeedback(feedbackEl, `Invalid file type (expected .csv).`, 'error');
+            inputElement.value = '';
+            return;
+        }
+
+        updateFeedback(feedbackEl, `Reading ${fileName}...`, 'info');
+        try {
+            const fileContent = await file.text();
+            updateFeedback(feedbackEl, `Parsing ${fileName}...`, 'info');
+
+            let parsedData = parseCSV(fileContent, delimiter);
+            if (parsedData === null) {
+                updateFeedback(feedbackEl, `Error parsing ${fileName}. Check console.`, 'error');
+                inputElement.value = '';
+                return;
+            }
+
+            if (dataType === 'sales') {
+                parsedData = remapFields(parsedData, SALES_FIELD_MAP);
+            } else {
+                parsedData = remapFields(parsedData, ARTICLES_FIELD_MAP);
+            }
+
+            const rowCount = parsedData.length;
+            if (rowCount === 0) {
+                updateFeedback(feedbackEl, `Loaded ${fileName} (0 data rows).`, 'warning');
+                return;
+            }
+
+            updateFeedback(feedbackEl, `Processing ${rowCount} rows from ${fileName}...`, 'info');
+
+            let currentData;
+            let storeName;
+            let uniqueKey;
+            let dataToSave = parsedData; // Start with parsed data
+
+            if (dataType === 'sales') {
+                // ---> Add timestamp property BEFORE merging/saving <---
+                dataToSave.forEach(item => {
+                    const dateString = item[CM_DATE_PAID_COL];
+                    let timestamp = null;
+                    if (dateString) {
+                        try {
+                            const dateMatch = dateString.match(/(\d{2})\.(\d{2})\.(\d{4})/);
+                            if (dateMatch) {
+                                const [ , day, month, year] = dateMatch;
+                                // Ensure consistent parsing, using UTC helps
+                                const dateObj = new Date(Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day)));
+                                if (!isNaN(dateObj.getTime())) {
+                                    timestamp = dateObj.getTime();
+                                } else {
+                                    console.warn(`Invalid date components for ${CM_DATE_PAID_COL}: ${dateString}`);
+                                }
+                            } else {
+                                console.warn(`Could not parse date format for ${CM_DATE_PAID_COL}: ${dateString}`);
+                            }
+                        } catch (e) {
+                            console.error(`Error parsing date string "${dateString}":`, e);
+                        }
+                    }
+                    item.datePaidTimestamp = timestamp; // Add the new property
+                });
+                // ---> End of added code <---
+
+                currentData = salesData;
+                storeName = SALES_STORE;
+                uniqueKey = CM_REF_COLUMN;
+
+            } else if (dataType === 'articles') {
+                // No timestamp needed for articles based on current reqs
+                currentData = soldArticlesData;
+                storeName = ARTICLES_STORE;
+                uniqueKey = SA_SHIPMENT_NR_COL;
+            } else {
+                console.error("Unknown data type:", dataType);
+                updateFeedback(feedbackEl, `Internal error: Unknown data type.`, 'error');
+                inputElement.value = '';
+                return;
+            }
+
+            // Merge the (potentially transformed) parsed data with existing in-memory data
+            const mergedData = mergeData(currentData, dataToSave, uniqueKey);
+
+            // Update in-memory state
+            if (dataType === 'sales') { salesData = mergedData; }
+            else if (dataType === 'articles') { soldArticlesData = mergedData; }
+
+            // Save the complete merged data (which now includes timestamps for sales)
+            await saveToStore(storeName, mergedData);
+
+            updateFeedback(feedbackEl, `Successfully processed ${fileName} (${rowCount} rows). Total ${mergedData.length} unique records.`, 'success');
+            inputElement.value = '';
+
+            // Refresh UI
+            updateAllCalculationsAndDisplays();
+            updateClearButtonState();
+
+        } catch (error) {
+            console.error("Error during file processing:", error);
+            updateFeedback(feedbackEl, `Error processing ${fileName}. See console.`, 'error');
+            inputElement.value = '';
+        }
+    }
+
+    async function clearAllData() {
+        if (confirm('Are you sure you want to clear ALL stored Sales and Sold Articles data from IndexedDB? This cannot be undone.')) {
+            try {
+                await clearStore(SALES_STORE);
+                await clearStore(ARTICLES_STORE);
+
+                // Reset in-memory state
+                salesData = [];
+                soldArticlesData = [];
+                calculatedTotals = {revenue: 0, fees: 0, shippingCharged: 0, netEarnings: 0};
+                currentSoldItemsSort = {key: 'Set', direction: 'asc'};
+                currentTransactionSort = {key: 'ID', direction: 'desc'};
+
+                // Clear file inputs and feedback in modal
+                cardmarketInput.value = '';
+                soldArticlesInput.value = '';
+                updateFeedback(cardmarketFeedbackEl, '', 'info');
+                updateFeedback(soldArticlesFeedbackEl, '', 'info');
+
+                // Refresh UI
+                updateAllCalculationsAndDisplays();
                 updateClearButtonState();
-            };
-            reader.onerror = (e) => { console.error("FileReader Error:", e); updateFeedback(feedbackEl, `Error reading file ${fileName}.`, 'error'); inputElement.value = ''; };
-            reader.readAsText(file);
-        }
 
-        function updateAllCalculationsAndDisplays() {
-            summaryErrorEl.textContent = ''; summaryErrorEl.classList.add('hidden');
-            transactionsError.textContent = ''; transactionsError.classList.add('hidden');
-            soldItemsError.textContent = ''; soldItemsError.classList.add('hidden');
-            calculateAndDisplaySummary();
-            displayTransactionsTable();
-            displaySoldItemsTable();
-        }
+                // Reset tabs
+                const firstTabButton = tabButtonsContainer.querySelector('.tab-button');
+                if (firstTabButton) {
+                    switchTab({target: firstTabButton});
+                }
 
-        function getGroupedData() {
-            const salesAmountByRef = {}; const feesByRef = {}; const dateByRef = {}; const articlesByShipment = {};
-            salesData.forEach(t => {
-                const ref = t[CM_REF_COLUMN]; if (!ref) return;
-                const cat = t[CM_CATEGORY_COLUMN]; const type = t[CM_TYPE_COLUMN]; const amt = parseCurrency(t[CM_AMOUNT_COLUMN]); const datePaid = t[CM_DATE_PAID_COL];
-                if (cat === 'Sales' && type === 'Sales') { salesAmountByRef[ref] = amt; if (datePaid) { dateByRef[ref] = datePaid; } }
-                else if (cat === 'Fees' && type === 'Commissions') { feesByRef[ref] = Math.abs(amt); }
-            });
-            soldArticlesData.forEach(a => {
-                const shipNr = a[SA_SHIPMENT_NR_COL]; if (!shipNr) return;
-                const articleValue = parseCurrency(a[SA_ARTICLE_VALUE_COL]); const quantity = parseInt(a[SA_AMOUNT_COL] || '1', 10); const name = a[SA_ARTICLE_NAME_COL] || 'Unknown'; const set = a[SA_SET_NAME_COL] || 'Unknown Set'; const productId = a[SA_PRODUCT_ID_COL] || '';
-                if (!articlesByShipment[shipNr]) { articlesByShipment[shipNr] = []; }
-                articlesByShipment[shipNr].push({ name, value: articleValue, set, quantity, productId });
-            });
-            return { salesAmountByRef, feesByRef, dateByRef, articlesByShipment };
-        }
 
-        function calculateAndDisplaySummary() {
-            const salesLoaded = salesData && salesData.length > 0; const articlesLoaded = soldArticlesData && soldArticlesData.length > 0;
-            calculatedTotals = { revenue: 0, fees: 0, shippingCharged: 0, netEarnings: 0 };
-            if (salesLoaded && articlesLoaded) {
-                const salesColsValid = validateColumns(salesData, [CM_REF_COLUMN, CM_CATEGORY_COLUMN, CM_TYPE_COLUMN, CM_AMOUNT_COLUMN], "Cardmarket Sales", summaryErrorEl);
-                const articlesColsValid = validateColumns(soldArticlesData, [SA_SHIPMENT_NR_COL, SA_ARTICLE_VALUE_COL, SA_AMOUNT_COL], "Sold Articles", summaryErrorEl);
-                if (salesColsValid && articlesColsValid) {
-                    const { salesAmountByRef, feesByRef, articlesByShipment } = getGroupedData();
-                    calculatedTotals.revenue = salesData.filter(t => t[CM_CATEGORY_COLUMN] === 'Sales' && t[CM_TYPE_COLUMN] === 'Sales').reduce((sum, t) => sum + parseCurrency(t[CM_AMOUNT_COLUMN]), 0);
-                    calculatedTotals.fees = salesData.filter(t => t[CM_CATEGORY_COLUMN] === 'Fees' && t[CM_TYPE_COLUMN] === 'Commissions').reduce((sum, t) => sum + Math.abs(parseCurrency(t[CM_AMOUNT_COLUMN])), 0);
+                alert('All stored data cleared.');
+                console.log('All data cleared from IndexedDB and memory.');
+
+            } catch (error) {
+                console.error("Error clearing data:", error);
+                alert("An error occurred while clearing data. Check the console.");
+            }
+        }
+    }
+
+    // --- Load data from IndexedDB on Startup ---
+    async function loadFromDB() {
+        console.log("Loading data from IndexedDB...");
+        try {
+            const [loadedSales, loadedArticles] = await Promise.all([
+                loadAllFromStore(SALES_STORE),
+                loadAllFromStore(ARTICLES_STORE)
+            ]);
+            salesData = loadedSales || [];
+            soldArticlesData = loadedArticles || [];
+            console.log(`Loaded ${salesData.length} sales records, ${soldArticlesData.length} article records.`);
+
+            updateAllCalculationsAndDisplays();
+            updateClearButtonState();
+            console.log("Initial data load and UI update complete.");
+        } catch (error) {
+            console.error("Failed to load initial data from IndexedDB:", error);
+            // Handle error appropriately - maybe show a message to the user
+            summaryErrorEl.textContent = "Failed to load data from storage. Please try uploading files again.";
+            summaryErrorEl.classList.remove('hidden');
+            transactionsError.textContent = "Failed to load data from storage.";
+            transactionsError.classList.remove('hidden');
+            soldItemsError.textContent = "Failed to load data from storage.";
+            soldItemsError.classList.remove('hidden');
+            updateClearButtonState(); // Update based on potentially empty arrays
+        }
+    }
+
+    // --- Display Logic (Mostly Unchanged, check validation calls) ---
+
+    function calculateAndDisplaySummary() {
+        // Clear previous errors specific to summary
+        const summaryValidationErrors = [];
+
+        const salesLoaded = salesData && salesData.length > 0;
+        const articlesLoaded = soldArticlesData && soldArticlesData.length > 0;
+
+        calculatedTotals = {revenue: 0, fees: 0, shippingCharged: 0, netEarnings: 0};
+
+        if (salesLoaded && articlesLoaded) {
+            // Validate required columns for summary calculation
+            const salesColsValid = validateColumns(salesData, [CM_REF_COLUMN, CM_CATEGORY_COLUMN, CM_TYPE_COLUMN, CM_AMOUNT_COLUMN], "Cardmarket Sales", null); // Don't output to summaryErrorEl directly yet
+            const articlesColsValid = validateColumns(soldArticlesData, [SA_SHIPMENT_NR_COL, SA_ARTICLE_VALUE_COL, SA_AMOUNT_COL], "Sold Articles", null);
+
+            if (!salesColsValid) summaryValidationErrors.push(`Required columns missing in Cardmarket Sales CSV.`);
+            if (!articlesColsValid) summaryValidationErrors.push(`Required columns missing in Sold Articles CSV.`);
+
+
+            if (salesColsValid && articlesColsValid) {
+                try {
+                    const {salesAmountByRef, feesByRef, articlesByShipment} = getGroupedData();
+
+                    // Calculate Total Revenue (Sum of all 'Sales' type entries)
+                    calculatedTotals.revenue = salesData
+                        .filter(t => t[CM_CATEGORY_COLUMN] === 'Sales' && t[CM_TYPE_COLUMN] === 'Sales')
+                        .reduce((sum, t) => sum + parseCurrency(t[CM_AMOUNT_COLUMN]), 0);
+
+                    // Calculate Total Fees (Sum of absolute 'Commissions' type entries)
+                    calculatedTotals.fees = salesData
+                        .filter(t => t[CM_CATEGORY_COLUMN] === 'Fees' && t[CM_TYPE_COLUMN] === 'Commissions')
+                        .reduce((sum, t) => sum + Math.abs(parseCurrency(t[CM_AMOUNT_COLUMN])), 0);
+
+                    // Calculate Shipping Charged and Total Item Value
                     let totalItemValueSum = 0;
+                    calculatedTotals.shippingCharged = 0; // Reset before summing
+
                     for (const ref in salesAmountByRef) {
                         const articlesInShipment = articlesByShipment[ref] || [];
                         const sumOfArticles = articlesInShipment.reduce((sum, item) => sum + (item.value * item.quantity), 0);
                         const shipping = Math.max(0, (salesAmountByRef[ref] || 0) - sumOfArticles);
-                        calculatedTotals.shippingCharged += shipping; totalItemValueSum += sumOfArticles;
+
+                        calculatedTotals.shippingCharged += shipping;
+                        totalItemValueSum += sumOfArticles;
                     }
+
+                    // Calculate Net Earnings (Total Item Value - Total Fees)
                     calculatedTotals.netEarnings = totalItemValueSum - calculatedTotals.fees;
-                } else { console.warn("Summary calculation skipped or inaccurate due to missing columns."); }
+
+                } catch (error) {
+                    console.error("Error during summary calculation:", error);
+                    summaryValidationErrors.push("An error occurred during summary calculation.");
+                }
+
+            } else {
+                console.warn("Summary calculation skipped or inaccurate due to missing columns.");
+                // Errors already added to summaryValidationErrors
             }
-            totalRevenueEl.textContent = formatCurrency(calculatedTotals.revenue); totalFeesEl.textContent = formatCurrency(calculatedTotals.fees); totalShippingEl.textContent = formatCurrency(calculatedTotals.shippingCharged); netEarningsEl.textContent = formatCurrency(calculatedTotals.netEarnings);
-            if (salesLoaded && articlesLoaded) { summaryContentEl.classList.remove('hidden'); summaryPlaceholderEl.classList.add('hidden'); }
-            else { summaryContentEl.classList.add('hidden'); summaryPlaceholderEl.classList.remove('hidden'); summaryPlaceholderEl.textContent = !salesLoaded ? 'Upload Cardmarket Sales CSV...' : 'Upload Sold Articles CSV...'; }
         }
 
-        function validateColumns(data, requiredCols, csvName, errorElement) {
-             if (!data || data.length === 0) return true; const firstRow = data[0]; if (!firstRow) return true; const foundHeaders = Object.keys(firstRow); const missingCols = requiredCols.filter(col => !foundHeaders.includes(col));
-             if (missingCols.length > 0) {
-                 const errorMsg = `Required columns missing in ${csvName} CSV: ${missingCols.join(', ')}. Views using this data may be incomplete or fail.`; console.error("Validation Error:", errorMsg, "Expected:", requiredCols, "Found:", foundHeaders);
-                 if (errorElement) { const existingError = errorElement.textContent; if (!existingError.includes(errorMsg)) { errorElement.textContent = existingError ? `${existingError}\n${errorMsg}` : errorMsg; } errorElement.classList.remove('hidden'); } return false;
-             }
-             if (errorElement && !errorElement.classList.contains('hidden')) { const errorMsgPattern = `Required columns missing in ${csvName} CSV:.*?(\n|$)`; const regex = new RegExp(errorMsgPattern, 'g'); const currentError = errorElement.textContent; const newError = currentError.replace(regex, '').trim(); errorElement.textContent = newError; if (!newError) { errorElement.classList.add('hidden'); } } return true;
+        // Update DOM Elements
+        totalRevenueEl.textContent = formatCurrency(calculatedTotals.revenue);
+        totalFeesEl.textContent = formatCurrency(calculatedTotals.fees);
+        totalShippingEl.textContent = formatCurrency(calculatedTotals.shippingCharged);
+        netEarningsEl.textContent = formatCurrency(calculatedTotals.netEarnings);
+
+        // Show/Hide Summary Content vs Placeholder
+        if (salesLoaded && articlesLoaded) {
+            summaryContentEl.classList.remove('hidden');
+            summaryPlaceholderEl.classList.add('hidden');
+        } else {
+            summaryContentEl.classList.add('hidden');
+            summaryPlaceholderEl.classList.remove('hidden');
+            summaryPlaceholderEl.textContent = !salesLoaded ? 'Upload Cardmarket Sales CSV...' : 'Upload Sold Articles CSV...';
         }
 
-        /** Displays the sortable table of transactions */
-        function displayTransactionsTable() {
-            transactionsTableBody.innerHTML = ''; transactionsTableHead.innerHTML = '';
-            const salesLoaded = salesData && salesData.length > 0; const articlesLoaded = soldArticlesData && soldArticlesData.length > 0;
-            if (!salesLoaded || !articlesLoaded) { transactionsTableContainer.classList.add('hidden'); transactionsPlaceholder.classList.remove('hidden'); transactionsPlaceholder.textContent = !salesLoaded ? 'Upload Cardmarket Sales CSV...' : 'Upload Sold Articles CSV...'; return; }
+        // Display accumulated validation errors for the summary section
+        if (summaryValidationErrors.length > 0) {
+            summaryErrorEl.textContent = summaryValidationErrors.join('\n');
+            summaryErrorEl.classList.remove('hidden');
+        } else {
+            summaryErrorEl.textContent = '';
+            summaryErrorEl.classList.add('hidden');
+        }
+    }
 
-            const requiredSalesCols = [CM_REF_COLUMN, CM_CATEGORY_COLUMN, CM_TYPE_COLUMN, CM_AMOUNT_COLUMN];
-            const requiredArticlesCols = [SA_SHIPMENT_NR_COL, SA_ARTICLE_VALUE_COL, SA_AMOUNT_COL];
-            const hasDateColumn = salesData[0] && salesData[0].hasOwnProperty(CM_DATE_PAID_COL);
-            let proceed = true;
-            if (!validateColumns(salesData, requiredSalesCols, "Cardmarket Sales", transactionsError)) { proceed = false; }
-            if (!validateColumns(soldArticlesData, requiredArticlesCols, "Sold Articles", transactionsError)) { proceed = false; }
-            if (!proceed) { transactionsTableContainer.classList.add('hidden'); transactionsPlaceholder.classList.remove('hidden'); transactionsPlaceholder.textContent = 'Cannot display transactions due to missing columns. Check errors above.'; return; }
+    /** Displays the sortable table of transactions */
+    function displayTransactionsTable() {
+        transactionsTableBody.innerHTML = ''; // Clear previous data
+        transactionsTableHead.innerHTML = ''; // Clear previous headers
 
-            const { salesAmountByRef, feesByRef, dateByRef, articlesByShipment } = getGroupedData();
-            const references = Object.keys(salesAmountByRef);
-            if (references.length === 0) { transactionsTableContainer.classList.add('hidden'); transactionsPlaceholder.classList.remove('hidden'); transactionsPlaceholder.textContent = "No sales transactions found in Sales CSV."; return; }
+        const salesLoaded = salesData && salesData.length > 0;
+        const articlesLoaded = soldArticlesData && soldArticlesData.length > 0;
 
-            const transactionTableData = references.map(ref => {
-                const salesAmount = salesAmountByRef[ref] || 0; const fees = feesByRef[ref] || 0; const articles = articlesByShipment[ref] || []; const date = dateByRef[ref] || '';
-                const sumOfArticles = articles.reduce((sum, item) => sum + (item.value * item.quantity), 0); const itemCount = articles.reduce((sum, item) => sum + item.quantity, 0); const shippingCharged = Math.max(0, salesAmount - sumOfArticles); const transactionEarnings = sumOfArticles - fees;
-                return { 'ID': ref, 'Date': date, 'Total Paid': salesAmount, 'Item Value': sumOfArticles, 'Shipping': shippingCharged, 'Fees': fees, 'Net Earnings': transactionEarnings, 'Items': itemCount };
+        // Initial state: Hide table, show placeholder
+        transactionsTableContainer.classList.add('hidden');
+        transactionsPlaceholder.classList.remove('hidden');
+        transactionsError.textContent = ''; // Clear previous errors
+        transactionsError.classList.add('hidden');
+
+
+        if (!salesLoaded || !articlesLoaded) {
+            transactionsPlaceholder.textContent = !salesLoaded ? 'Upload Cardmarket Sales CSV...' : 'Upload Sold Articles CSV...';
+            return; // Exit if data is missing
+        }
+
+        // Validate required columns specifically for the transactions table
+        const requiredSalesCols = [CM_REF_COLUMN, CM_CATEGORY_COLUMN, CM_TYPE_COLUMN, CM_AMOUNT_COLUMN];
+        const requiredArticlesCols = [SA_SHIPMENT_NR_COL, SA_ARTICLE_VALUE_COL, SA_AMOUNT_COL]; // Need amount for item count
+        // Check if Date Paid column exists in the first row (optional but nice)
+        const hasDateColumn = salesData[0] && salesData[0].hasOwnProperty(CM_DATE_PAID_COL);
+
+        let proceed = true;
+        // Use the specific error element for this table
+        if (!validateColumns(salesData, requiredSalesCols, "Cardmarket Sales", transactionsError)) {
+            proceed = false;
+        }
+        if (!validateColumns(soldArticlesData, requiredArticlesCols, "Sold Articles", transactionsError)) {
+            proceed = false;
+        }
+
+        if (!proceed) {
+            // Error message is already displayed by validateColumns
+            transactionsPlaceholder.textContent = 'Cannot display transactions due to missing columns. Check errors above.';
+            return; // Exit if validation fails
+        }
+
+        try {
+            // Group articles for lookup
+             const articlesGrouped = {};
+             soldArticlesData.forEach(a => {
+                  const shipNr = a[SA_SHIPMENT_NR_COL];
+                  if (!shipNr) return;
+                  if (!articlesGrouped[shipNr]) articlesGrouped[shipNr] = [];
+                  articlesGrouped[shipNr].push({
+                     value: parseCurrency(a[SA_ARTICLE_VALUE_COL]),
+                     quantity: parseInt(a[SA_AMOUNT_COL] || '1', 10)
+                  });
+             });
+
+            // Prepare data directly from salesData which includes the timestamp
+            const transactionTableData = [];
+            salesData.forEach(item => {
+                const ref = item[CM_REF_COLUMN];
+                // Filter for actual sales entries
+                if (!ref || item[CM_CATEGORY_COLUMN] !== 'Sales' || item[CM_TYPE_COLUMN] !== 'Sales') {
+                    return;
+                }
+
+                // Find corresponding fee (could be improved if multiple fees per ref exist)
+                const feeItem = salesData.find(f => f[CM_REF_COLUMN] === ref && f[CM_CATEGORY_COLUMN] === 'Fees' && f[CM_TYPE_COLUMN] === 'Commissions');
+                const fees = feeItem ? Math.abs(parseCurrency(feeItem[CM_AMOUNT_COLUMN])) : 0;
+
+                const salesAmount = parseCurrency(item[CM_AMOUNT_COLUMN]);
+                const articles = articlesGrouped[ref] || [];
+                const datePaidString = item[CM_DATE_PAID_COL] || '';
+                const dateTimestamp = item.datePaidTimestamp; // Use the pre-calculated timestamp
+
+                const sumOfArticles = articles.reduce((sum, art) => sum + (art.value * art.quantity), 0);
+                const itemCount = articles.reduce((sum, art) => sum + art.quantity, 0);
+                const shippingCharged = Math.max(0, salesAmount - sumOfArticles);
+                const transactionEarnings = sumOfArticles - fees;
+
+                transactionTableData.push({
+                    'ID': ref,
+                    'Date': datePaidString, // Original string for display
+                    'datePaidTimestamp': dateTimestamp, // Timestamp for sorting
+                    'Total Paid': salesAmount,
+                    'Item Value': sumOfArticles,
+                    'Shipping': shippingCharged,
+                    'Fees': fees,
+                    'Net Earnings': transactionEarnings,
+                    'Items': itemCount
+                });
             });
 
-            const sortKey = currentTransactionSort.key; const sortDir = currentTransactionSort.direction;
-            const sortableCols = { 'ID': 'number', 'Date': 'date', 'Total Paid': 'number', 'Item Value': 'number', 'Shipping': 'number', 'Fees': 'number', 'Net Earnings': 'number', 'Items': 'number' };
+            // Sorting
+            const sortKey = currentTransactionSort.key;
+            const sortDir = currentTransactionSort.direction;
+            // Ensure 'Date' uses timestamp for sorting comparison
+            const sortableCols = { 'ID': 'number', 'Date': 'timestamp', 'Total Paid': 'number', 'Item Value': 'number', 'Shipping': 'number', 'Fees': 'number', 'Net Earnings': 'number', 'Items': 'number' };
+
             transactionTableData.sort((a, b) => {
-                const valA = a[sortKey]; const valB = b[sortKey]; const sortType = sortableCols[sortKey] || 'string'; let comparison = 0;
-                if (sortType === 'number') { comparison = (Number(valA) || 0) - (Number(valB) || 0); } else if (sortType === 'date') { comparison = (new Date(valA) || 0) - (new Date(valB) || 0); } else { comparison = String(valA || '').localeCompare(String(valB || '')); }
-                if (sortKey === 'ID') { comparison = Number(valA) - Number(valB); } return sortDir === 'asc' ? comparison : -comparison;
+                const valA = a[sortKey];
+                const valB = b[sortKey];
+                const sortType = sortableCols[sortKey] || 'string';
+                let comparison = 0;
+
+                // ---> Use timestamp for Date column sort <---
+                if (sortKey === 'Date') {
+                    comparison = (Number(a.datePaidTimestamp) || 0) - (Number(b.datePaidTimestamp) || 0);
+                } else if (sortableCols[sortKey] === 'number') {
+                    comparison = (Number(valA) || 0) - (Number(valB) || 0);
+                     // Ensure ID sorting is strictly numeric
+                     if (sortKey === 'ID') { comparison = Number(valA) - Number(valB); }
+                } else {
+                    // Fallback for string columns (none in this table currently)
+                    comparison = String(valA || '').localeCompare(String(valB || ''));
+                }
+
+                return sortDir === 'asc' ? comparison : -comparison;
             });
 
+            // Determine headers (check if original Date string exists)
+            const hasDateColumn = salesData.some(item => item.hasOwnProperty(CM_DATE_PAID_COL) && item[CM_DATE_PAID_COL]);
             const baseHeaders = ['ID', 'Items', 'Total Paid', 'Item Value', 'Shipping', 'Fees', 'Net Earnings'];
-            const displayHeaders = hasDateColumn ? ['ID', 'Date', 'Items', 'Total Paid', 'Item Value', 'Shipping', 'Fees', 'Net Earnings'] : baseHeaders;
+            const displayHeaders = hasDateColumn ? ['ID', 'Date', ...baseHeaders.slice(1)] : baseHeaders;
+
+            // --- Render Table Header ---
             const headerRow = document.createElement('tr');
             displayHeaders.forEach(headerText => {
-                const th = document.createElement('th'); th.scope = 'col'; const isNumeric = ['Total Paid', 'Item Value', 'Shipping', 'Fees', 'Net Earnings', 'Items'].includes(headerText); const isCenter = ['Items'].includes(headerText);
+                const th = document.createElement('th');
+                th.scope = 'col';
+                const isNumeric = ['Total Paid', 'Item Value', 'Shipping', 'Fees', 'Net Earnings', 'Items'].includes(headerText);
+                const isCenter = ['Items'].includes(headerText);
                 th.className = `px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap ${isNumeric ? 'number-header' : ''} ${isCenter ? 'center-header' : ''}`;
                 th.textContent = headerText;
+
+                 // Check if the column is sortable
                 if (sortableCols[headerText]) {
-                    th.dataset.sortKey = headerText; th.style.cursor = 'pointer'; const arrowSpan = document.createElement('span'); arrowSpan.className = 'sort-arrow'; if (sortKey === headerText) { arrowSpan.classList.add(sortDir); } th.appendChild(arrowSpan); th.addEventListener('click', handleTransactionSortClick);
+                    th.dataset.sortKey = headerText;
+                    th.style.cursor = 'pointer';
+                    const arrowSpan = document.createElement('span');
+                    arrowSpan.className = 'sort-arrow';
+                    if (sortKey === headerText) { arrowSpan.classList.add(sortDir); }
+                    th.appendChild(arrowSpan);
+                    th.addEventListener('click', handleTransactionSortClick);
                 }
                 headerRow.appendChild(th);
             });
             transactionsTableHead.appendChild(headerRow);
 
+
+            // --- Render Table Body ---
             transactionTableData.forEach(item => {
-                const row = document.createElement('tr'); row.className = 'hover:bg-slate-50 transition-colors duration-150 ease-in-out';
-                displayHeaders.forEach(header => {
-                    const cell = document.createElement('td'); const isNumeric = ['Total Paid', 'Item Value', 'Shipping', 'Fees', 'Net Earnings', 'Items', 'ID'].includes(header); const isCenter = ['Items'].includes(header);
-                    cell.className = `px-4 py-2 whitespace-nowrap text-sm text-slate-700 ${isNumeric ? 'number-cell' : ''} ${isCenter ? 'center-cell' : ''}`;
-                    let cellValue = item.hasOwnProperty(header) ? item[header] : '';
-                    if (header === 'ID') { // Make ID clickable
-                        cell.innerHTML = `<span class="clickable-id" data-transaction-id="${cellValue}">${cellValue}</span>`;
-                    } else if (header === 'Date') { cell.textContent = formatDate(cellValue); }
-                    else if (['Total Paid', 'Item Value', 'Shipping', 'Fees', 'Net Earnings'].includes(header)) { cell.textContent = formatCurrency(cellValue); }
-                    else { cell.textContent = formatCell(cellValue); }
-                    if (header === 'Net Earnings') { cell.classList.add(cellValue >= 0 ? 'text-green-700' : 'text-red-700', 'font-semibold'); }
-                    row.appendChild(cell);
-                });
-                transactionsTableBody.appendChild(row);
+                 const row = document.createElement('tr');
+                 row.className = 'hover:bg-slate-50 transition-colors duration-150 ease-in-out';
+                 displayHeaders.forEach(header => {
+                     const cell = document.createElement('td');
+                     const isNumeric = ['Total Paid', 'Item Value', 'Shipping', 'Fees', 'Net Earnings', 'Items', 'ID'].includes(header);
+                     const isCenter = ['Items'].includes(header);
+                     cell.className = `px-4 py-2 whitespace-nowrap text-sm text-slate-700 ${isNumeric ? 'number-cell' : ''} ${isCenter ? 'center-cell' : ''}`;
+
+                     let cellValue = item.hasOwnProperty(header) ? item[header] : '';
+
+                     // Display logic remains the same, using formatDate for the 'Date' string
+                     if (header === 'ID') { /* ... */ cell.innerHTML = `<span class="clickable-id" data-transaction-id="${cellValue}">${cellValue}</span>`; }
+                     else if (header === 'Date') { cell.textContent = formatDate(cellValue); }
+                     else if (['Total Paid', 'Item Value', 'Shipping', 'Fees', 'Net Earnings'].includes(header)) { cell.textContent = formatCurrency(cellValue); }
+                     else { cell.textContent = formatCell(cellValue); }
+                     if (header === 'Net Earnings') { cell.classList.add(cellValue >= 0 ? 'text-green-700' : 'text-red-700', 'font-semibold'); }
+
+                     row.appendChild(cell);
+                 });
+                 transactionsTableBody.appendChild(row);
             });
-            transactionsTableContainer.classList.remove('hidden'); transactionsPlaceholder.classList.add('hidden');
+
+            // Show table, hide placeholder
+            transactionsTableContainer.classList.remove('hidden');
+            transactionsPlaceholder.classList.add('hidden');
+
+        } catch (error) {
+            console.error("Error displaying transactions table:", error);
+            transactionsError.textContent = "An error occurred while preparing the transactions table.";
+            transactionsError.classList.remove('hidden');
+            transactionsTableContainer.classList.add('hidden');
+            transactionsPlaceholder.classList.remove('hidden');
+            transactionsPlaceholder.textContent = 'Error displaying data.';
+        }
+    }
+
+    /** Handles clicks on the transaction table headers for sorting */
+    function handleTransactionSortClick(event) {
+        const targetTh = event.currentTarget;
+        const newSortKey = targetTh.dataset.sortKey;
+        if (!newSortKey) return;
+
+        if (newSortKey === currentTransactionSort.key) {
+            // Toggle direction
+            currentTransactionSort.direction = currentTransactionSort.direction === 'asc' ? 'desc' : 'asc';
+        } else {
+            // Set new key, default direction (desc for ID/Date, asc otherwise)
+            currentTransactionSort.key = newSortKey;
+            currentTransactionSort.direction = ['ID', 'Date'].includes(newSortKey) ? 'desc' : 'asc';
         }
 
-        /** Handles clicks on the transaction table headers for sorting */
-        function handleTransactionSortClick(event) {
-            const targetTh = event.currentTarget; const newSortKey = targetTh.dataset.sortKey; if (!newSortKey) return;
-            if (newSortKey === currentTransactionSort.key) { currentTransactionSort.direction = currentTransactionSort.direction === 'asc' ? 'desc' : 'asc'; }
-            else { currentTransactionSort.key = newSortKey; currentTransactionSort.direction = ['ID', 'Date'].includes(newSortKey) ? 'desc' : 'asc'; }
-            displayTransactionsTable();
+        // Re-render the table with new sorting
+        displayTransactionsTable();
+    }
+
+
+    /** Displays the sortable table of individually sold items */
+    function displaySoldItemsTable() {
+        soldItemsTableBody.innerHTML = ''; // Clear previous data
+        soldItemsTableHead.innerHTML = ''; // Clear previous headers
+
+        const articlesLoaded = soldArticlesData && soldArticlesData.length > 0;
+
+        // Initial state: Hide table, show placeholder
+        soldItemsTableContainer.classList.add('hidden');
+        soldItemsPlaceholder.classList.remove('hidden');
+        soldItemsError.textContent = ''; // Clear previous errors
+        soldItemsError.classList.add('hidden');
+
+        if (!articlesLoaded) {
+            soldItemsPlaceholder.textContent = 'Upload Sold Articles CSV to see the list of sold items.';
+            return; // Exit if no articles data
+        }
+
+        // Validate required columns for this table
+        const tableCols = [SA_SET_NAME_COL, SA_ARTICLE_NAME_COL, SA_ARTICLE_VALUE_COL, SA_AMOUNT_COL, SA_SHIPMENT_NR_COL];
+        if (!validateColumns(soldArticlesData, tableCols, "Sold Articles", soldItemsError)) {
+            // Error message is already displayed by validateColumns
+            soldItemsPlaceholder.textContent = 'Cannot display table due to missing columns in Sold Articles CSV. Check errors above.';
+            return; // Exit if validation fails
         }
 
 
-        /** Displays the sortable table of individually sold items */
-        function displaySoldItemsTable() {
-            soldItemsTableBody.innerHTML = ''; soldItemsTableHead.innerHTML = '';
-            const articlesLoaded = soldArticlesData && soldArticlesData.length > 0;
-            if (!articlesLoaded) { soldItemsTableContainer.classList.add('hidden'); soldItemsPlaceholder.classList.remove('hidden'); soldItemsPlaceholder.textContent = 'Upload Sold Articles CSV to see the list of sold items.'; return; }
-
-            // Removed Foil column validation, kept Shipment Nr for linking
-            const tableCols = [SA_SET_NAME_COL, SA_ARTICLE_NAME_COL, SA_ARTICLE_VALUE_COL, SA_AMOUNT_COL, SA_SHIPMENT_NR_COL];
-            if (!validateColumns(soldArticlesData, tableCols, "Sold Articles", soldItemsError)) { soldItemsTableContainer.classList.add('hidden'); soldItemsPlaceholder.classList.remove('hidden'); soldItemsPlaceholder.textContent = 'Cannot display table due to missing columns in Sold Articles CSV. Check errors above.'; return; }
-
+        try {
+            // Flatten the data: create one entry per individual card sold
             const flatSoldItems = [];
             soldArticlesData.forEach(row => {
-                const quantity = parseInt(row[SA_AMOUNT_COL] || '1', 10); const price = parseCurrency(row[SA_ARTICLE_VALUE_COL]); const setName = row[SA_SET_NAME_COL] || 'Unknown Set'; const cardName = row[SA_ARTICLE_NAME_COL] || 'Unknown Card'; const transactionId = row[SA_SHIPMENT_NR_COL] || '';
+                const quantity = parseInt(row[SA_AMOUNT_COL] || '1', 10);
+                if (isNaN(quantity) || quantity < 1) {
+                    console.warn("Skipping article row due to invalid quantity:", row);
+                    return; // Skip if quantity is invalid
+                }
+                const price = parseCurrency(row[SA_ARTICLE_VALUE_COL]);
+                const setName = row[SA_SET_NAME_COL] || 'Unknown Set';
+                const cardName = row[SA_ARTICLE_NAME_COL] || 'Unknown Card';
+                const transactionId = row[SA_SHIPMENT_NR_COL] || '';
+
                 for (let i = 0; i < quantity; i++) {
-                    flatSoldItems.push({ 'Transaction ID': transactionId, 'Set': setName, 'Card Name': cardName, 'Price': price, '_SetSlug': generateSlug(setName), '_CardSlug': generateSlug(cardName) });
+                    flatSoldItems.push({
+                        'Transaction ID': transactionId,
+                        'Set': setName,
+                        'Card Name': cardName,
+                        'Price': price,
+                        // Pre-calculate slugs for linking
+                        '_SetSlug': generateSlug(setName),
+                        '_CardSlug': generateSlug(cardName)
+                    });
                 }
             });
 
-            const sortKey = currentSoldItemsSort.key; const sortDir = currentSoldItemsSort.direction;
-            // Removed Foil from sortable cols
-            const sortableCols = { 'Transaction ID': 'number', 'Set': 'string', 'Card Name': 'string', 'Price': 'number' };
+            // Sorting
+            const sortKey = currentSoldItemsSort.key;
+            const sortDir = currentSoldItemsSort.direction;
+            const sortableCols = {
+                'Transaction ID': 'number',
+                'Set': 'string',
+                'Card Name': 'string',
+                'Price': 'number'
+            };
+
             flatSoldItems.sort((a, b) => {
-                const valA = a[sortKey]; const valB = b[sortKey]; const sortType = sortableCols[sortKey] || 'string'; let comparison = 0;
-                if (sortType === 'number') { comparison = (Number(valA) || 0) - (Number(valB) || 0); }
-                else { comparison = String(valA || '').localeCompare(String(valB || '')); }
-                if (sortKey === 'Transaction ID') { comparison = Number(valA) - Number(valB); }
+                const valA = a[sortKey];
+                const valB = b[sortKey];
+                const sortType = sortableCols[sortKey] || 'string';
+                let comparison = 0;
+
+                if (sortType === 'number') {
+                    comparison = (Number(valA) || 0) - (Number(valB) || 0);
+                } else {
+                    comparison = String(valA || '').localeCompare(String(valB || ''));
+                }
+                // Ensure ID sorting is strictly numeric
+                if (sortKey === 'Transaction ID') {
+                    comparison = Number(valA) - Number(valB);
+                }
+
                 return sortDir === 'asc' ? comparison : -comparison;
             });
 
-            // Removed 'Foil' from display headers
+            // Render Table Header
             const displayHeaders = ['Transaction ID', 'Set', 'Card Name', 'Price'];
             const headerRow = document.createElement('tr');
             displayHeaders.forEach(headerText => {
-                const th = document.createElement('th'); th.scope = 'col'; const isNumeric = ['Price', 'Transaction ID'].includes(headerText);
+                const th = document.createElement('th');
+                th.scope = 'col';
+                const isNumeric = ['Price', 'Transaction ID'].includes(headerText);
                 th.className = `px-4 py-2 text-left text-xs font-medium text-slate-500 uppercase tracking-wider whitespace-nowrap ${isNumeric ? 'number-header' : ''}`;
                 th.textContent = headerText;
+
                 if (sortableCols[headerText]) {
-                    th.dataset.sortKey = headerText; th.style.cursor = 'pointer'; const arrowSpan = document.createElement('span'); arrowSpan.className = 'sort-arrow'; if (sortKey === headerText) { arrowSpan.classList.add(sortDir); } th.appendChild(arrowSpan); th.addEventListener('click', handleSoldItemsSortClick);
+                    th.dataset.sortKey = headerText;
+                    th.style.cursor = 'pointer';
+                    const arrowSpan = document.createElement('span');
+                    arrowSpan.className = 'sort-arrow';
+                    if (sortKey === headerText) {
+                        arrowSpan.classList.add(sortDir); // 'asc' or 'desc'
+                    }
+                    th.appendChild(arrowSpan);
+                    th.addEventListener('click', handleSoldItemsSortClick);
                 }
                 headerRow.appendChild(th);
             });
             soldItemsTableHead.appendChild(headerRow);
 
+            // Render Table Body
             if (flatSoldItems.length === 0) {
-                 const row = soldItemsTableBody.insertRow(); const cell = row.insertCell(); cell.colSpan = displayHeaders.length; cell.textContent = "No sold items found in the uploaded CSV."; cell.className = "text-center text-slate-500 py-4";
+                // Handle case where articles CSV was uploaded but contained no valid items
+                const row = soldItemsTableBody.insertRow();
+                const cell = row.insertCell();
+                cell.colSpan = displayHeaders.length;
+                cell.textContent = "No individual sold items found in the uploaded data.";
+                cell.className = "text-center text-slate-500 py-4";
             } else {
                 flatSoldItems.forEach((item) => {
-                    const row = document.createElement('tr'); row.className = 'hover:bg-slate-50 transition-colors duration-150 ease-in-out';
+                    const row = document.createElement('tr');
+                    row.className = 'hover:bg-slate-50 transition-colors duration-150 ease-in-out';
                     displayHeaders.forEach(header => {
-                        const cell = document.createElement('td'); const isNumeric = ['Price', 'Transaction ID'].includes(header);
+                        const cell = document.createElement('td');
+                        const isNumeric = ['Price', 'Transaction ID'].includes(header);
                         cell.className = `px-4 py-2 whitespace-nowrap text-sm text-slate-700 ${isNumeric ? 'number-cell' : ''}`;
+
                         let cellValue = item.hasOwnProperty(header) ? item[header] : '';
 
                         if (header === 'Transaction ID') { // Make ID clickable
                             cell.innerHTML = `<span class="clickable-id" data-transaction-id="${cellValue}">${cellValue}</span>`;
-                        } else if (header === 'Price') { cell.textContent = formatCurrency(cellValue); }
-                        else if (header === 'Card Name') {
-                            const cardSlug = item['_CardSlug']; const setSlug = item['_SetSlug']; const link = `https://www.cardmarket.com/en/Magic/Products/Singles/${setSlug}/${cardSlug}`;
-                            cell.innerHTML = `<a href="${link}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 hover:underline">${formatCell(cellValue)}</a>`;
-                        } else { cell.textContent = formatCell(cellValue); }
+                        } else if (header === 'Price') {
+                            cell.textContent = formatCurrency(cellValue);
+                        } else if (header === 'Card Name') {
+                            // Use pre-calculated slugs for the link
+                            const cardSlug = item['_CardSlug'];
+                            const setSlug = item['_SetSlug'];
+                            const link = `https://www.cardmarket.com/en/Magic/Products/Singles/${setSlug}/${cardSlug}`;
+                            // Link only if slugs are valid
+                            if (cardSlug && setSlug) {
+                                cell.innerHTML = `<a href="${link}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 hover:underline">${formatCell(cellValue)}</a>`;
+                            } else {
+                                cell.textContent = formatCell(cellValue); // Display text if slugs invalid
+                            }
+                        } else {
+                            cell.textContent = formatCell(cellValue);
+                        }
                         row.appendChild(cell);
                     });
                     soldItemsTableBody.appendChild(row);
                 });
             }
-            soldItemsTableContainer.classList.remove('hidden'); soldItemsPlaceholder.classList.add('hidden');
+
+            // Show table, hide placeholder
+            soldItemsTableContainer.classList.remove('hidden');
+            soldItemsPlaceholder.classList.add('hidden');
+
+        } catch (error) {
+            console.error("Error displaying sold items table:", error);
+            soldItemsError.textContent = "An error occurred while preparing the sold items list.";
+            soldItemsError.classList.remove('hidden');
+            soldItemsTableContainer.classList.add('hidden'); // Hide potentially broken table
+            soldItemsPlaceholder.classList.remove('hidden');
+            soldItemsPlaceholder.textContent = 'Error displaying data.';
+        }
+    }
+
+    /** Handles clicks on the sold items table headers for sorting */
+    function handleSoldItemsSortClick(event) {
+        const targetTh = event.currentTarget;
+        const newSortKey = targetTh.dataset.sortKey;
+        if (!newSortKey) return;
+
+        if (newSortKey === currentSoldItemsSort.key) {
+            // Toggle direction
+            currentSoldItemsSort.direction = currentSoldItemsSort.direction === 'asc' ? 'desc' : 'asc';
+        } else {
+            // Set new key, default direction to ascending
+            currentSoldItemsSort.key = newSortKey;
+            currentSoldItemsSort.direction = 'asc'; // Default to asc for new column
         }
 
-        /** Handles clicks on the sold items table headers for sorting */
-        function handleSoldItemsSortClick(event) {
-            const targetTh = event.currentTarget; const newSortKey = targetTh.dataset.sortKey; if (!newSortKey) return;
-            if (newSortKey === currentSoldItemsSort.key) { currentSoldItemsSort.direction = currentSoldItemsSort.direction === 'asc' ? 'desc' : 'asc'; }
-            else { currentSoldItemsSort.key = newSortKey; currentSoldItemsSort.direction = 'asc'; }
-            displaySoldItemsTable();
+        // Re-render the table with new sorting
+        displaySoldItemsTable();
+    }
+
+
+    /** Updates the enabled/disabled state of the clear button */
+    function updateClearButtonState() {
+        const hasData = (salesData && salesData.length > 0) || (soldArticlesData && soldArticlesData.length > 0);
+        clearDataButton.disabled = !hasData;
+        clearDataFeedbackEl.textContent = hasData ? 'Clears ALL stored sales & articles data.' : 'No data stored.';
+    }
+
+    // --- Modal Control Functions ---
+    function openModal(modalElement) {
+        if (modalElement) modalElement.classList.add('active');
+    }
+
+    function closeModal(modalElement) {
+        if (modalElement) modalElement.classList.remove('active');
+    }
+
+    /** Shows the transaction details modal with items in a table */
+    function showTransactionDetailsModal(transactionId) {
+        if (!transactionId || !soldArticlesData || soldArticlesData.length === 0) {
+            console.warn("Cannot show details: Invalid transaction ID or no articles data loaded.");
+            return;
         }
 
-        /** Updates the enabled/disabled state of the clear button */
-        function updateClearButtonState() {
-            const hasData = (salesData && salesData.length > 0) || (soldArticlesData && soldArticlesData.length > 0);
-            clearDataButton.disabled = !hasData; clearDataFeedbackEl.textContent = hasData ? 'Clears stored sales & articles data.' : 'No data stored.';
-        }
+        // Filter articles based on the *exact* transaction ID string
+        const items = soldArticlesData.filter(item => item[SA_SHIPMENT_NR_COL] === transactionId);
 
-        // --- Local Storage Functions ---
-        function saveSalesToLocalStorage() { try { localStorage.setItem(SALES_DATA_STORAGE_KEY, JSON.stringify(salesData)); } catch (e) { console.error('Failed to save sales data:', e); } }
-        function loadSalesFromLocalStorage() { const d=localStorage.getItem(SALES_DATA_STORAGE_KEY); if(d){try{const p=JSON.parse(d);if(Array.isArray(p)){salesData=p;return true;}}catch(e){console.error('Failed to parse sales data:',e);localStorage.removeItem(SALES_DATA_STORAGE_KEY);}} return false; }
-        function saveSoldArticlesToLocalStorage() { try { localStorage.setItem(SOLD_ARTICLES_STORAGE_KEY, JSON.stringify(soldArticlesData)); } catch (e) { console.error('Failed to save sold articles data:', e); } }
-        function loadSoldArticlesFromLocalStorage() { const d=localStorage.getItem(SOLD_ARTICLES_STORAGE_KEY); if(d){try{const p=JSON.parse(d);if(Array.isArray(p)){soldArticlesData=p;return true;}}catch(e){console.error('Failed to parse sold articles data:',e);localStorage.removeItem(SOLD_ARTICLES_STORAGE_KEY);}} return false; }
+        // Link the title ID to the Cardmarket order page
+        const orderLink = `https://www.cardmarket.com/en/Magic/Orders/${transactionId}`;
+        transactionDetailsTitle.innerHTML = `Transaction Details: ID <a href="${orderLink}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 hover:underline">#${transactionId}</a>`;
 
-        /** Clears ALL stored data */
-        function clearAllData() {
-            if (confirm('Are you sure you want to clear ALL stored Sales and Sold Articles data? This cannot be undone.')) {
-                salesData = []; soldArticlesData = [];
-                calculatedTotals = { revenue: 0, fees: 0, shippingCharged: 0, netEarnings: 0 };
-                currentSoldItemsSort = { key: 'Set', direction: 'asc' }; currentTransactionSort = { key: 'ID', direction: 'desc' };
-                localStorage.removeItem(SALES_DATA_STORAGE_KEY); localStorage.removeItem(SOLD_ARTICLES_STORAGE_KEY);
-                cardmarketInput.value = ''; soldArticlesInput.value = '';
-                updateFeedback(cardmarketFeedbackEl, '', 'info'); updateFeedback(soldArticlesFeedbackEl, '', 'info');
-                updateAllCalculationsAndDisplays(); updateClearButtonState();
-                const firstTabButton = tabButtonsContainer.querySelector('.tab-button'); if (firstTabButton) { switchTab({ target: firstTabButton }); }
-                alert('All stored data cleared.'); console.log('All data cleared.');
-            }
-        }
+        transactionDetailsTableBody.innerHTML = ''; // Clear previous table rows
+        transactionDetailsEmptyMsg.classList.add('hidden'); // Hide empty message initially
 
-        // --- Modal Control Functions ---
-        function openModal(modalElement) { if (modalElement) modalElement.classList.add('active'); }
-        function closeModal(modalElement) { if (modalElement) modalElement.classList.remove('active'); }
+        if (items.length === 0) {
+            transactionDetailsEmptyMsg.classList.remove('hidden'); // Show empty message
+            console.log(`No articles found for Transaction ID: ${transactionId}`);
+        } else {
+            console.log(`Found ${items.length} articles for Transaction ID: ${transactionId}`);
+            items.forEach(item => {
+                const row = transactionDetailsTableBody.insertRow();
+                row.className = 'hover:bg-slate-50'; // Add hover effect
 
-        /** Shows the transaction details modal with items in a table */
-        function showTransactionDetailsModal(transactionId) {
-            if (!transactionId || !soldArticlesData || soldArticlesData.length === 0) return;
+                const quantity = parseInt(item[SA_AMOUNT_COL] || '1', 10);
+                const price = parseCurrency(item[SA_ARTICLE_VALUE_COL]);
+                const name = item[SA_ARTICLE_NAME_COL] || 'Unknown';
+                const set = item[SA_SET_NAME_COL] || 'Unknown Set';
 
-            const items = soldArticlesData.filter(item => item[SA_SHIPMENT_NR_COL] === transactionId);
+                // Amount Cell
+                const cellAmt = row.insertCell();
+                cellAmt.className = 'px-2 py-1 whitespace-nowrap';
+                cellAmt.textContent = quantity;
 
-            // Link the title ID to the Cardmarket order page
-            const orderLink = `https://www.cardmarket.com/en/Magic/Orders/${transactionId}`;
-            transactionDetailsTitle.innerHTML = `Transaction Details: ID <a href="${orderLink}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 hover:underline">#${transactionId}</a>`;
-
-            transactionDetailsTableBody.innerHTML = ''; // Clear previous table rows
-            transactionDetailsEmptyMsg.classList.add('hidden'); // Hide empty message initially
-
-            if (items.length === 0) {
-                transactionDetailsEmptyMsg.classList.remove('hidden'); // Show empty message
-            } else {
-                items.forEach(item => {
-                    const row = transactionDetailsTableBody.insertRow();
-                    row.className = 'hover:bg-slate-50'; // Add hover effect
-
-                    const quantity = parseInt(item[SA_AMOUNT_COL] || '1', 10);
-                    const price = parseCurrency(item[SA_ARTICLE_VALUE_COL]);
-                    const name = item[SA_ARTICLE_NAME_COL] || 'Unknown';
-                    const set = item[SA_SET_NAME_COL] || 'Unknown Set';
-
-                    // Amount Cell
-                    const cellAmt = row.insertCell();
-                    cellAmt.className = 'px-2 py-1 whitespace-nowrap';
-                    cellAmt.textContent = quantity;
-
-                    // Card Name Cell (Linked)
-                    const cellName = row.insertCell();
-                    cellName.className = 'px-2 py-1 whitespace-nowrap';
-                    const cardSlug = generateSlug(name);
-                    const setSlug = generateSlug(set);
+                // Card Name Cell (Linked)
+                const cellName = row.insertCell();
+                cellName.className = 'px-2 py-1 whitespace-nowrap';
+                const cardSlug = generateSlug(name);
+                const setSlug = generateSlug(set);
+                if (cardSlug && setSlug) {
                     const link = `https://www.cardmarket.com/en/Magic/Products/Singles/${setSlug}/${cardSlug}`;
                     cellName.innerHTML = `<a href="${link}" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 hover:underline">${formatCell(name)}</a>`;
+                } else {
+                    cellName.textContent = formatCell(name);
+                }
 
-                    // Set Cell
-                    const cellSet = row.insertCell();
-                    cellSet.className = 'px-2 py-1 whitespace-nowrap';
-                    cellSet.textContent = set;
+                // Set Cell
+                const cellSet = row.insertCell();
+                cellSet.className = 'px-2 py-1 whitespace-nowrap';
+                cellSet.textContent = set;
 
-                    // Price Cell
-                    const cellPrice = row.insertCell();
-                    cellPrice.className = 'px-2 py-1 whitespace-nowrap number-cell'; // Right align
-                    cellPrice.textContent = formatCurrency(price);
-                });
+                // Price Cell
+                const cellPrice = row.insertCell();
+                cellPrice.className = 'px-2 py-1 whitespace-nowrap number-cell'; // Right align
+                cellPrice.textContent = formatCurrency(price);
+            });
+        }
+
+        openModal(transactionDetailsModal);
+    }
+
+    /** Handles clicks within table bodies to potentially open the details modal */
+    function handleTableClick(event) {
+        const target = event.target.closest('[data-transaction-id]');
+        if (target) {
+            const transactionId = target.dataset.transactionId;
+            console.log("Clicked Transaction ID:", transactionId);
+            showTransactionDetailsModal(transactionId);
+        }
+    }
+
+    // --- Tab Switching Logic ---
+    function switchTab(event) {
+        const targetButton = event.target && event.target.closest ? event.target.closest('.tab-button') : event.target;
+        if (!targetButton || targetButton.classList.contains('active')) return; // Ignore clicks on active or outside buttons
+
+        const targetTabId = targetButton.dataset.tab;
+        if (!targetTabId) return; // Ignore if button has no data-tab
+
+        // Update button styles
+        tabButtonsContainer.querySelectorAll('.tab-button').forEach(button => {
+            button.classList.toggle('active', button === targetButton);
+        });
+
+        // Update content visibility
+        tabContentContainer.querySelectorAll('.tab-content').forEach(content => {
+            content.classList.toggle('active', content.id === targetTabId);
+        });
+    }
+
+    // --- New Breakdown Logic ---
+
+    function updateMonthlySummary() {
+        // Use the grouped data already calculated
+        const {salesAmountByRef, feesByRef, dateByRef, articlesByShipment} = getGroupedData();
+        const monthly = {}; // Structure: { 'YYYY-MM': { rev, fees, ship, net, cnt } }
+
+        for (const ref in salesAmountByRef) {
+            const dateString = dateByRef[ref];
+            if (!dateString) continue; // Skip transactions without a date
+
+            try {
+                // Parse date string (assuming DD.MM.YYYY format from CM)
+                const dateMatch = dateString.match(/(\d{2})\.(\d{2})\.(\d{4})/);
+                if (!dateMatch) {
+                    console.warn("Could not parse date for ref:", ref, dateString);
+                    continue;
+                }
+                const [, day, month, year] = dateMatch;
+                // Format as YYYY-MM for consistent keys
+                const yearMonthKey = `${year}-${month}`;
+
+                // Initialize month if it doesn't exist
+                if (!monthly[yearMonthKey]) {
+                    monthly[yearMonthKey] = {rev: 0, fees: 0, ship: 0, net: 0, cnt: 0};
+                }
+
+                // Aggregate data for the month
+                const revenue = salesAmountByRef[ref] || 0;
+                const fee = feesByRef[ref] || 0;
+                const articles = articlesByShipment[ref] || [];
+                const articleSum = articles.reduce((sum, item) => sum + (item.value * item.quantity), 0);
+                const shipping = Math.max(0, revenue - articleSum);
+                const netEarning = articleSum - fee;
+
+                monthly[yearMonthKey].rev += revenue;
+                monthly[yearMonthKey].fees += fee;
+                monthly[yearMonthKey].ship += shipping;
+                monthly[yearMonthKey].net += netEarning;
+                monthly[yearMonthKey].cnt += 1; // Count transactions
+
+            } catch (error) {
+                console.error("Error processing date for monthly summary:", dateString, error);
+            }
+        }
+
+        // Populate the filter dropdown
+        const sortedMonths = Object.keys(monthly).sort((a, b) => b.localeCompare(a)); // Sort newest first
+        monthFilterSelect.innerHTML = `<option value="">All Months</option>` +
+            sortedMonths.map(ym => `<option value="${ym}">${ym}</option>`).join('');
+
+        // Attach event listener AFTER populating
+        monthFilterSelect.onchange = () => renderMonthTable(monthly, monthFilterSelect.value);
+
+        // Initial render (all months)
+        renderMonthTable(monthly, '');
+    }
+
+    function renderMonthTable(monthlyData, filterKey) {
+        monthSummaryTableBody.innerHTML = ''; // Clear previous rows
+
+        // Filter and sort the data to display
+        const filteredEntries = Object.entries(monthlyData)
+            .filter(([ym]) => !filterKey || ym === filterKey) // Apply filter if one is selected
+            .sort((a, b) => b[0].localeCompare(a[0])); // Sort newest month first
+
+        if (filteredEntries.length === 0) {
+            const row = monthSummaryTableBody.insertRow();
+            const cell = row.insertCell();
+            cell.colSpan = 6; // Match number of columns
+            cell.textContent = filterKey ? `No data for ${filterKey}.` : "No monthly data available.";
+            cell.className = "text-center text-slate-500 py-3 px-3";
+            return;
+        }
+
+        // Populate table rows
+        filteredEntries.forEach(([yearMonth, values]) => {
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-slate-50';
+            tr.innerHTML = `
+            <td class="px-3 py-1 whitespace-nowrap">${yearMonth}</td>
+            <td class="px-3 py-1 number-cell whitespace-nowrap">${formatCurrency(values.rev)}</td>
+            <td class="px-3 py-1 number-cell whitespace-nowrap">${formatCurrency(values.fees)}</td>
+            <td class="px-3 py-1 number-cell whitespace-nowrap">${formatCurrency(values.ship)}</td>
+            <td class="px-3 py-1 number-cell whitespace-nowrap font-semibold ${values.net >= 0 ? 'text-green-700' : 'text-red-700'}">${formatCurrency(values.net)}</td>
+            <td class="px-3 py-1 center-cell whitespace-nowrap">${values.cnt}</td>
+          `;
+            monthSummaryTableBody.appendChild(tr);
+        });
+    }
+
+    function updateSetSummary() {
+        const setMap = {}; // Structure: { 'SetName': { cnt: 0, rev: 0 } }
+
+        soldArticlesData.forEach(item => {
+            const setName = item[SA_SET_NAME_COL] || 'Unknown Set';
+            const quantity = parseInt(item[SA_AMOUNT_COL] || '1', 10);
+            const valuePerCard = parseCurrency(item[SA_ARTICLE_VALUE_COL]);
+
+            if (isNaN(quantity) || quantity < 1) return; // Skip invalid quantity
+
+            // Initialize set if it doesn't exist
+            if (!setMap[setName]) {
+                setMap[setName] = {cnt: 0, rev: 0};
             }
 
-            openModal(transactionDetailsModal);
+            // Aggregate data: count individual cards and sum their value
+            setMap[setName].cnt += quantity;
+            setMap[setName].rev += valuePerCard * quantity;
+        });
+
+        // Populate the filter dropdown
+        const sortedSets = Object.keys(setMap).sort((a, b) => a.localeCompare(b)); // Sort alphabetically
+        setFilterSelect.innerHTML = `<option value="">All Sets</option>` +
+            sortedSets.map(setName => `<option value="${setName}">${setName}</option>`).join('');
+
+        // Attach event listener AFTER populating
+        setFilterSelect.onchange = () => renderSetTable(setMap, setFilterSelect.value);
+
+        // Initial render (all sets)
+        renderSetTable(setMap, '');
+    }
+
+    function renderSetTable(setData, filterKey) {
+        setSummaryTableBody.innerHTML = ''; // Clear previous rows
+
+        // Filter and sort the data to display (sort by revenue descending)
+        const filteredEntries = Object.entries(setData)
+            .filter(([setName]) => !filterKey || setName === filterKey) // Apply filter
+            .sort((a, b) => b[1].rev - a[1].rev); // Sort by revenue descending
+
+        if (filteredEntries.length === 0) {
+            const row = setSummaryTableBody.insertRow();
+            const cell = row.insertCell();
+            cell.colSpan = 3; // Match number of columns
+            cell.textContent = filterKey ? `No data for ${filterKey}.` : "No set data available.";
+            cell.className = "text-center text-slate-500 py-3 px-3";
+            return;
         }
 
-        /** Handles clicks within table bodies to potentially open the details modal */
-        function handleTableClick(event) {
-            const target = event.target.closest('[data-transaction-id]');
-            if (target) {
-                const transactionId = target.dataset.transactionId;
-                showTransactionDetailsModal(transactionId);
+        // Populate table rows
+        filteredEntries.forEach(([setName, values]) => {
+            const tr = document.createElement('tr');
+            tr.className = 'hover:bg-slate-50';
+            tr.innerHTML = `
+                <td class="px-3 py-1">${setName}</td>
+                <td class="px-3 py-1 number-cell">${values.cnt}</td>
+                <td class="px-3 py-1 number-cell font-semibold">${formatCurrency(values.rev)}</td>
+            `;
+            setSummaryTableBody.appendChild(tr);
+        });
+    }
+
+    // --- Global Update Function ---
+    function updateAllCalculationsAndDisplays() {
+        console.log("Updating all calculations and displays...");
+        // Clear general errors first
+        summaryErrorEl.textContent = '';
+        summaryErrorEl.classList.add('hidden');
+        transactionsError.textContent = '';
+        transactionsError.classList.add('hidden');
+        soldItemsError.textContent = '';
+        soldItemsError.classList.add('hidden');
+
+        // Run all update functions
+        calculateAndDisplaySummary(); // Handles its own validation display
+        displayTransactionsTable();   // Handles its own validation display
+        displaySoldItemsTable();      // Handles its own validation display
+        updateMonthlySummary();       // Assumes data is valid if tables rendered
+        updateSetSummary();           // Assumes data is valid if tables rendered
+        console.log("Finished updating displays.");
+    }
+
+    // --- Initialization Function ---
+    function initialize() {
+        console.log('Initializing Sales Tracker...');
+        // Upload Modal listeners
+        openUploadModalButton.addEventListener('click', () => openModal(uploadModal));
+        closeUploadModalButton.addEventListener('click', () => closeModal(uploadModal));
+        modalDoneButton.addEventListener('click', () => closeModal(uploadModal));
+        // Click outside modal to close
+        uploadModal.addEventListener('click', (event) => {
+            if (event.target === uploadModal) {
+                closeModal(uploadModal);
             }
-        }
+        });
 
-        // --- Tab Switching Logic ---
-        function switchTab(event) {
-             const targetButton = event.target && event.target.closest ? event.target.closest('.tab-button') : event.target;
-             if (!targetButton || targetButton.classList.contains('active')) return;
-             const targetTabId = targetButton.dataset.tab; if (!targetTabId) return;
-             tabButtonsContainer.querySelectorAll('.tab-button').forEach(button => { button.classList.toggle('active', button.dataset.tab === targetTabId); });
-             tabContentContainer.querySelectorAll('.tab-content').forEach(content => { content.classList.toggle('active', content.id === targetTabId); });
-        }
+        // Transaction Details Modal listeners
+        closeDetailsModalButton.addEventListener('click', () => closeModal(transactionDetailsModal));
+        // Click outside modal to close
+        transactionDetailsModal.addEventListener('click', (event) => {
+            if (event.target === transactionDetailsModal) {
+                closeModal(transactionDetailsModal);
+            }
+        });
 
+        // File input listeners - use updated async handler
+        cardmarketInput.addEventListener('change', (e) => handleFileUpload(e, ';', 'sales', cardmarketFeedbackEl));
+        soldArticlesInput.addEventListener('change', (e) => handleFileUpload(e, ';', 'articles', soldArticlesFeedbackEl)); // Changed type to 'articles'
 
-        // --- Initialization ---
-        function initialize() {
-            // Upload Modal listeners
-            openUploadModalButton.addEventListener('click', () => openModal(uploadModal));
-            closeUploadModalButton.addEventListener('click', () => closeModal(uploadModal));
-            modalDoneButton.addEventListener('click', () => closeModal(uploadModal));
-            uploadModal.addEventListener('click', (event) => { if (event.target === uploadModal) { closeModal(uploadModal); } }); // Click outside closes
+        // Clear data listener - use updated async handler
+        clearDataButton.addEventListener('click', clearAllData);
 
-            // Transaction Details Modal listeners
-            closeDetailsModalButton.addEventListener('click', () => closeModal(transactionDetailsModal));
-            transactionDetailsModal.addEventListener('click', (event) => { if (event.target === transactionDetailsModal) { closeModal(transactionDetailsModal); } }); // Click outside closes
+        // Tab listener
+        tabButtonsContainer.addEventListener('click', switchTab);
 
-            // File input listeners
-            cardmarketInput.addEventListener('change', (e) => handleFileUpload(e, ';', 'sales', cardmarketFeedbackEl));
-            soldArticlesInput.addEventListener('change', (e) => handleFileUpload(e, ';', 'soldArticles', soldArticlesFeedbackEl));
+        // Delegated click listeners for table IDs (Transaction Details Modal)
+        transactionsTableBody.addEventListener('click', handleTableClick);
+        soldItemsTableBody.addEventListener('click', handleTableClick);
 
-            // Clear data listener
-            clearDataButton.addEventListener('click', clearAllData);
+        // Note: Filter dropdown listeners are attached *after* populating in updateMonthly/SetSummary
 
-            // Tab listener
-            tabButtonsContainer.addEventListener('click', switchTab);
+        console.log('Event listeners attached.');
+        // Initial UI state is set after data loading in DOMContentLoaded listener
+    }
 
-            // Delegated click listeners for table IDs
-            transactionsTableBody.addEventListener('click', handleTableClick);
-            soldItemsTableBody.addEventListener('click', handleTableClick);
+    // --- Run on DOM Load ---
+    document.addEventListener('DOMContentLoaded', async () => {
+        initialize(); // Set up listeners first
+        await loadFromDB(); // Load data and trigger initial UI update
+    });
 
-            // Load existing data
-            loadSalesFromLocalStorage();
-            loadSoldArticlesFromLocalStorage();
-
-            // Initial UI update
-            updateAllCalculationsAndDisplays();
-            updateClearButtonState();
-
-            console.log('Sales Tracker Initialized (v23).'); // Updated version
-        }
-
-        document.addEventListener('DOMContentLoaded', initialize);
-    </script>
+</script>
 
 </body>
 </html>
