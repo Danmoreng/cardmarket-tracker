@@ -1,113 +1,159 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Cardmarket Tracker v1.2 (IndexedDB)</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>Cardmarket Tracker v2 (IndexedDB)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/idb@7/build/umd.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
 <body class="bg-slate-100 text-slate-900 font-sans">
 <div class="container mx-auto p-4 lg:p-8">
+    <!-- Header ----------------------------------------------------------- -->
     <header class="text-center mb-8">
-        <h1 class="text-3xl font-bold text-slate-800">Cardmarket Tracker (Offline)</h1>
-        <p class="text-slate-600 mt-1 text-sm">Importiere beliebig viele CSVs & analysiere deine Umsätze</p>
+        <h1 class="text-3xl font-bold text-slate-800">Cardmarket Tracker</h1>
+        <p class="text-slate-600 mt-1 text-sm">CSV‑Import ▶︎ lokale Auswertung &amp; Charts</p>
     </header>
 
-    <section class="flex flex-col sm:flex-row gap-4 justify-between items-center mb-8">
-        <div class="flex gap-4">
-            <input id="csv-input" type="file" accept=".csv" multiple class="text-sm" />
-            <button id="clear-btn" class="px-4 py-2 rounded-md bg-red-600 text-white text-sm disabled:opacity-40" disabled>Löschen</button>
+    <!-- Upload & Zeitraum Controls -------------------------------------- -->
+    <section class="flex flex-col sm:flex-row gap-4 justify-between items-center mb-6">
+        <div class="flex gap-4 items-center">
+            <input id="csv-input" type="file" accept=".csv" multiple class="text-sm"/>
+            <button id="clear-btn" class="px-4 py-2 rounded-md bg-red-600 text-white text-sm disabled:opacity-40"
+                    disabled>Daten löschen
+            </button>
         </div>
-        <div class="flex gap-2 items-center">
-            <label for="scope" class="text-sm">Zeitraum:</label>
-            <select id="scope" class="text-sm px-2 py-1 border rounded-md">
+        <div class="flex gap-2 items-center text-sm">
+            <label for="scope">Zeitraum:</label>
+            <select id="scope" class="px-2 py-1 border rounded-md">
                 <option value="all">Gesamt</option>
                 <option value="year">Jahr</option>
                 <option value="month" selected>Monat</option>
             </select>
-            <input id="scope-value" type="month" class="text-sm px-2 py-1 border rounded-md" />
+            <input id="scope-value" type="month" class="px-2 py-1 border rounded-md"/>
         </div>
     </section>
 
-    <section id="summary" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10"></section>
+    <!-- Summary Tiles ---------------------------------------------------- -->
+    <section id="summary" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"></section>
 
-    <section>
-        <h2 class="text-xl font-semibold mb-4">Details (coming soon)</h2>
-        <pre id="debug" class="bg-white p-4 border rounded-md text-xs overflow-auto h-64"></pre>
-    </section>
+    <!-- Tabs ------------------------------------------------------------- -->
+    <div class="border-b border-slate-300 mb-4 flex gap-2" id="tabs-nav">
+        <button data-tab="tab-sales" class="tab-btn active">Verkäufe</button>
+        <button data-tab="tab-purchases" class="tab-btn">Einkäufe</button>
+        <button data-tab="tab-debug" class="tab-btn">Log</button>
+    </div>
+
+    <!-- Tab Content Wrapper --------------------------------------------- -->
+    <div id="tabs-wrapper">
+        <div id="tab-sales" class="tab-pane active"></div>
+        <div id="tab-purchases" class="tab-pane"></div>
+        <div id="tab-debug" class="tab-pane">
+            <pre id="debug" class="bg-white p-4 border rounded-md text-xs overflow-auto h-64"></pre>
+        </div>
+    </div>
 </div>
 
+<style>
+    .tab-btn {
+        padding: .5rem 1rem;
+        border-radius: .375rem .375rem 0 0;
+        background: #f1f5f9;
+        font-size: .875rem
+    }
+
+    .tab-btn.active {
+        background: #fff;
+        border: 1px solid #cbd5e1;
+        border-bottom: none;
+        font-weight: 600
+    }
+
+    .tab-pane {
+        display: none
+    }
+
+    .tab-pane.active {
+        display: block
+    }
+
+    th, td {
+        white-space: nowrap
+    }
+
+    td.num {
+        text-align: right
+    }
+</style>
+
 <script type="module">
-    //--------------------------------------------------
-    // Utility
-    //--------------------------------------------------
-    function parseCMDate(s) {
+    //------------------------------------------------------------------
+    // Helper / Util
+    //------------------------------------------------------------------
+    const euro = (c) => `€${(c / 100).toFixed(2)}`;
+    const fmtDate = (iso) => iso ? new Date(iso).toLocaleDateString() : '';
+    const log = (msg) => {
+        console.log(msg);
+        debugEl.textContent += msg + "\n";
+    };
+
+    const parseCMDate = (s) => {
         if (!s) return null;
         if (/^\d{4}-\d{2}-\d{2}/.test(s)) return new Date(s);
         const m = s.match(/^(\d{2})[\.\/](\d{2})[\.\/](\d{4})/);
         if (m) return new Date(`${m[3]}-${m[2]}-${m[1]}`);
         const d = new Date(s);
         return isNaN(d) ? null : d;
-    }
-    const ym = (d) => d?.toISOString().slice(0, 7) || '';
-    const toCent = (v) => {
-        if (!v) return 0;
-        return Math.round(parseFloat(String(v).replace(/\s|€|\./g, '').replace(',', '.')) * 100);
     };
+    const ym = (d) => d ? d.toISOString().slice(0, 7) : '';
+    const toCent = (v) => Math.round(parseFloat(String(v || 0).replace(/\s|€|\./g, '').replace(',', '.')) * 100);
     const F = {
-        // helper to pull first existing field from aliases
-        get(r, ...aliases) {
-            for (const a of aliases) if (a in r && r[a] !== '') return r[a];
-            return undefined;
+        get(r, ...a) {
+            for (const k of a) if (k in r && r[k] !== "") return r[k];
         }
     };
-    const log = (msg) => { console.log(msg); debugEl.textContent += `${msg}\n`; };
 
-    //--------------------------------------------------
-    // DB
-    //--------------------------------------------------
-    const dbPromise = idb.openDB('cardmarketDB', 2, {
-        upgrade(db, oldV) {
-            if (!db.objectStoreNames.contains('transactions')) {
-                db.createObjectStore('transactions', { keyPath: 'transactionId' }).createIndex('month', 'month');
-            }
-            if (!db.objectStoreNames.contains('orders')) {
-                db.createObjectStore('orders', { keyPath: 'orderId' }).createIndex('month', 'month');
-            }
-            if (!db.objectStoreNames.contains('articles')) {
-                db.createObjectStore('articles', { keyPath: 'articleId', autoIncrement: true }).createIndex('orderId', 'orderId');
-            }
-            if (!db.objectStoreNames.contains('aggregates')) {
-                db.createObjectStore('aggregates', { keyPath: 'key' });
-            }
+    //------------------------------------------------------------------
+    // IndexedDB Setup
+    //------------------------------------------------------------------
+    const dbPromise = idb.openDB('cardmarketDB', 3, {
+        upgrade(db) {
+            db.createObjectStore('transactions', {keyPath: 'transactionId'}).createIndex('month', 'month');
+            db.createObjectStore('orders', {keyPath: 'orderId'}).createIndex('direction', 'direction');
+            db.createObjectStore('articles', {
+                keyPath: 'articleId',
+                autoIncrement: true
+            }).createIndex('orderId', 'orderId');
+            db.createObjectStore('aggregates', {keyPath: 'key'});
         }
     });
 
-    //--------------------------------------------------
+    //------------------------------------------------------------------
     // DOM refs
-    //--------------------------------------------------
+    //------------------------------------------------------------------
     const csvInput = document.getElementById('csv-input');
     const clearBtn = document.getElementById('clear-btn');
-    const debugEl  = document.getElementById('debug');
-    const summaryEl= document.getElementById('summary');
     const scopeSel = document.getElementById('scope');
     const scopeVal = document.getElementById('scope-value');
+    const summaryEl = document.getElementById('summary');
+    const tabsNav = document.getElementById('tabs-nav');
+    const debugEl = document.getElementById('debug');
 
-    //--------------------------------------------------
+    //------------------------------------------------------------------
     // CSV Import
-    //--------------------------------------------------
+    //------------------------------------------------------------------
     csvInput.addEventListener('change', async (e) => {
-        const files = Array.from(e.target.files || []);
+        const files = [...e.target.files];
         for (const f of files) {
             const text = await f.text();
-            const data = Papa.parse(text, { header: true, delimiter: ';', skipEmptyLines: true }).data;
-            await routeRows(f.name.toLowerCase(), data);
+            const rows = Papa.parse(text, {header: true, delimiter: ';', skipEmptyLines: true}).data;
+            await routeRows(f.name.toLowerCase(), rows);
         }
         csvInput.value = '';
         await rebuildAggregates();
         await refreshSummary();
+        await renderTables();
         clearBtn.disabled = false;
     });
 
@@ -117,130 +163,213 @@
         if (name.includes('purchased orders')) return importOrders(rows, 'purchase');
         if (name.includes('sold articles')) return importArticles(rows, 'sale');
         if (name.includes('purchased articles')) return importArticles(rows, 'purchase');
-        log(`⚠️ Unbekannter CSV-Typ: ${name}`);
+        log('⚠️ unbekannter Typ ' + name);
     }
 
     //--------------------------------------------------
     // Importer
     //--------------------------------------------------
     async function importTransactions(rows) {
-        const db = await dbPromise; const tx = db.transaction('transactions', 'readwrite'); let n = 0;
+        const db = await dbPromise;
+        const tx = db.transaction('transactions', 'readwrite');
+        let n = 0;
         for (const r of rows) {
-            const id = F.get(r,'Reference'); if (!id) continue;
-            const dateRaw = F.get(r,'Date Paid','Date'); const d = parseCMDate(dateRaw); if (!d) continue;
+            const id = F.get(r, 'Reference');
+            if (!id) continue;
+            const dateRaw = F.get(r, 'Date Paid', 'Date');
+            const d = parseCMDate(dateRaw);
+            if (!d) continue;
             await tx.store.put({
                 transactionId: Number(id),
                 date: d.toISOString(),
                 month: ym(d),
-                category: F.get(r,'Category')||'',
-                type: F.get(r,'Type')||'',
-                counterpart: F.get(r,'Counterpart')||'',
-                amountCent: toCent(F.get(r,'Amount')),
+                category: F.get(r, 'Category') || '',
+                type: F.get(r, 'Type') || '',
+                counterpart: F.get(r, 'Counterpart') || '',
+                amountCent: toCent(F.get(r, 'Amount')),
                 currency: 'EUR',
-                balanceAfterCent: toCent(F.get(r,'Closing balance (EUR)','Balance After'))
+                balanceAfterCent: toCent(F.get(r, 'Closing balance (EUR)', 'Balance After'))
             });
             n++;
         }
-        await tx.done; log(`✔︎ ${n} Transactions importiert`);
+        await tx.done;
+        log(`✔︎ ${n} Transactions importiert`);
     }
 
     async function importOrders(rows, dir) {
-        const db = await dbPromise; const tx = db.transaction('orders', 'readwrite'); let n=0;
+        const db = await dbPromise;
+        const tx = db.transaction('orders', 'readwrite');
+        let n = 0;
         for (const r of rows) {
-            const id = F.get(r,'Order ID','OrderID'); if (!id) continue;
-            const d = parseCMDate(F.get(r,'Date of Purchase','Date','Date of Payment'));
+            const id = F.get(r, 'Order ID', 'OrderID');
+            if (!id) continue;
+            const d = parseCMDate(F.get(r, 'Date of Purchase', 'Date', 'Date of Payment'));
             await tx.store.put({
                 orderId: Number(id),
                 date: d ? d.toISOString() : null,
                 month: ym(d),
                 direction: dir,
-                username: F.get(r,'Username')||'',
-                country: F.get(r,'Country')||'',
-                city: F.get(r,'City')||'',
-                articleCount: Number(F.get(r,'Article Count','Items'))||0,
-                merchandiseValueCent: toCent(F.get(r,'Merchandise Value')),
-                shipmentCostsCent: toCent(F.get(r,'Shipment Costs')),
-                commissionCent: toCent(F.get(r,'Commission','Trustee service fee')),
-                totalValueCent: toCent(F.get(r,'Total Value')),
-                netValueCent: toCent(F.get(r,'Total Value')) * (dir==='sale'?1:-1),
-                currency:'EUR'
+                username: F.get(r, 'Username') || '',
+                country: F.get(r, 'Country') || '',
+                city: F.get(r, 'City') || '',
+                articleCount: Number(F.get(r, 'Article Count', 'Items')) || 0,
+                merchandiseValueCent: toCent(F.get(r, 'Merchandise Value')),
+                shipmentCostsCent: toCent(F.get(r, 'Shipment Costs')),
+                commissionCent: toCent(F.get(r, 'Commission', 'Trustee service fee')),
+                totalValueCent: toCent(F.get(r, 'Total Value')),
+                netValueCent: toCent(F.get(r, 'Total Value')) * (dir === 'sale' ? 1 : -1),
+                currency: 'EUR'
             });
             n++;
         }
-        await tx.done; log(`✔︎ ${n} ${dir} Orders importiert`);
+        await tx.done;
+        log(`✔︎ ${n} ${dir} Orders importiert`);
     }
 
     async function importArticles(rows, dir) {
-        const db = await dbPromise; const tx = db.transaction('articles','readwrite'); let n=0;
+        const db = await dbPromise;
+        const tx = db.transaction('articles', 'readwrite');
+        let n = 0;
         for (const r of rows) {
-            const ship = F.get(r,'Shipment nr.','Shipment nr','Shipment ID'); if (!ship) continue;
-            const d = parseCMDate(F.get(r,'Date of purchase','Date'));
-            const qty = Number(F.get(r,'Amount'))||1;
-            const unit = toCent(F.get(r,'Article Value','Price'));
+            const ship = F.get(r, 'Shipment nr.', 'Shipment nr', 'Shipment ID');
+            if (!ship) continue;
+            const d = parseCMDate(F.get(r, 'Date of purchase', 'Date'));
+            const qty = Number(F.get(r, 'Amount')) || 1;
+            const unit = toCent(F.get(r, 'Article Value', 'Price'));
             await tx.store.put({
                 orderId: Number(ship),
-                date: d?d.toISOString():null,
+                date: d ? d.toISOString() : null,
                 month: ym(d),
                 direction: dir,
-                productId: F.get(r,'Product ID')||'',
-                name: F.get(r,'Article')||'',
-                expansion: F.get(r,'Expansion')||'',
-                category: F.get(r,'Category')||'',
+                productId: F.get(r, 'Product ID') || '',
+                name: F.get(r, 'Article') || '',
+                expansion: F.get(r, 'Expansion') || '',
+                category: F.get(r, 'Category') || '',
                 quantity: qty,
                 unitPriceCent: unit,
-                totalCent: unit*qty,
-                currency:'EUR'
+                totalCent: unit * qty,
+                currency: 'EUR'
             });
             n++;
         }
-        await tx.done; log(`✔︎ ${n} ${dir} Articles importiert`);
+        await tx.done;
+        log(`✔︎ ${n} ${dir} Articles importiert`);
     }
 
     //--------------------------------------------------
     // Aggregates & UI (unverändert)
     //--------------------------------------------------
     async function rebuildAggregates() {
-        const db = await dbPromise; await db.clear('aggregates');
-        const tx = db.transaction(['transactions','aggregates'],'readwrite');
+        const db = await dbPromise;
+        await db.clear('aggregates');
+        const tx = db.transaction(['transactions', 'aggregates'], 'readwrite');
         let cur = await tx.objectStore('transactions').index('month').openCursor();
-        const sums={};
-        while(cur){
-            const {month,category,amountCent} = cur.value; if(!month){cur=await cur.continue();continue;}
-            sums[month] ||= {sales:0,fees:0};
-            if(category==='Sales') sums[month].sales += amountCent;
-            if(category==='Fees')  sums[month].fees  += Math.abs(amountCent);
+        const sums = {};
+        while (cur) {
+            const {month, category, amountCent} = cur.value;
+            if (!month) {
+                cur = await cur.continue();
+                continue;
+            }
+            sums[month] ||= {sales: 0, fees: 0};
+            if (category === 'Sales') sums[month].sales += amountCent;
+            if (category === 'Fees') sums[month].fees += Math.abs(amountCent);
             cur = await cur.continue();
         }
-        for(const [m,v] of Object.entries(sums)) await tx.objectStore('aggregates').put({key:m,...v,profitCent:v.sales-v.fees});
-        await tx.done; log('Aggregates neu erstellt');
+        for (const [m, v] of Object.entries(sums)) await tx.objectStore('aggregates').put({
+            key: m, ...v,
+            profitCent: v.sales - v.fees
+        });
+        await tx.done;
+        log('Aggregates neu erstellt');
     }
 
-    scopeSel.addEventListener('change',refreshSummary);
-    scopeVal.addEventListener('input',refreshSummary);
+    scopeSel.addEventListener('change', refreshSummary);
+    scopeVal.addEventListener('input', refreshSummary);
+    tabsNav.addEventListener('click', switchTab);
 
-    async function refreshSummary(){
-        const db=await dbPromise; const sc=scopeSel.value; const val=scopeVal.value; summaryEl.innerHTML='';
-        let data=[];
-        if(sc==='all') data=await db.getAll('aggregates');
-        else if(sc==='year'&&val) data=(await db.getAll('aggregates')).filter(a=>a.key.startsWith(val.slice(0,4)));
-        else if(sc==='month'&&val){const s=await db.get('aggregates',val); if(s) data=[s];}
-        if(!data.length){summaryEl.innerHTML='<p class="col-span-full text-slate-500">Keine Daten</p>'; return;}
-        const t=data.reduce((a,d)=>{a.sales+=d.sales;a.fees+=d.fees;a.profit+=(d.profitCent||0);return a;},{sales:0,fees:0,profit:0});
-        for(const [lbl,valC] of [['Umsatz',t.sales],['Gebühren',t.fees],['Gewinn',t.profit]]){
-            const div=document.createElement('div'); div.className='p-4 bg-white border rounded-md shadow-sm';
-            div.innerHTML=`<p class="text-sm text-slate-600">${lbl}</p><p class="text-lg font-bold">€${(valC/100).toFixed(2)}</p>`;
+    function switchTab(e) {
+        const btn = e.target.closest('.tab-btn');
+        if (!btn) return;
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+        const id = btn.dataset.tab;
+        document.querySelectorAll('.tab-pane').forEach(p => p.classList.toggle('active', p.id === id));
+    }
+
+    async function renderTables() {
+        await renderOrdersTable('sale', '#tab-sales', 'Verkaufte Bestellungen');
+        await renderOrdersTable('purchase', '#tab-purchases', 'Gekaufte Bestellungen');
+    }
+
+    async function renderOrdersTable(direction, selector, title) {
+        const wrap = document.querySelector(selector);
+        wrap.innerHTML = '';
+        const db = await dbPromise;
+        const idx = db.transaction('orders').store.index('direction');
+        const orders = await idx.getAll(direction);
+        if (!orders.length) {
+            wrap.innerHTML = '<p class="text-slate-500">Keine Daten</p>';
+            return;
+        }
+        orders.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+        const table = document.createElement('table');
+        table.className = 'min-w-full bg-white border';
+        table.innerHTML = `<caption class="text-left font-semibold mb-2">${title} (${orders.length})</caption>
+        <thead class="bg-slate-50 text-xs"> <tr>
+          <th class="px-2 py-1">Datum</th><th class="px-2 py-1">Order ID</th><th class="px-2 py-1">User</th><th class="px-2 py-1 num">Artikel</th><th class="px-2 py-1 num">Gesamt</th><th class="px-2 py-1 num">Gebühr</th><th class="px-2 py-1 num">Versand</th>
+        </tr></thead><tbody></tbody>`;
+        const tbody = table.querySelector('tbody');
+        orders.forEach(o => {
+            const tr = document.createElement('tr');
+            tr.className = 'border-t hover:bg-slate-50';
+            tr.innerHTML = `<td class="px-2 py-1">${fmtDate(o.date)}</td><td class="px-2 py-1">${o.orderId}</td><td class="px-2 py-1">${o.username}</td><td class="px-2 py-1 num">${o.articleCount}</td><td class="px-2 py-1 num">${euro(o.totalValueCent)}</td><td class="px-2 py-1 num">${euro(o.commissionCent)}</td><td class="px-2 py-1 num">${euro(o.shipmentCostsCent)}</td>`;
+            tbody.appendChild(tr);
+        });
+        wrap.appendChild(table);
+    }
+
+    async function refreshSummary() {
+        const db = await dbPromise;
+        const sc = scopeSel.value;
+        const val = scopeVal.value;
+        summaryEl.innerHTML = '';
+        let data = [];
+        if (sc === 'all') data = await db.getAll('aggregates');
+        else if (sc === 'year' && val) data = (await db.getAll('aggregates')).filter(a => a.key.startsWith(val.slice(0, 4)));
+        else if (sc === 'month' && val) {
+            const s = await db.get('aggregates', val);
+            if (s) data = [s];
+        }
+        if (!data.length) {
+            summaryEl.innerHTML = '<p class="col-span-full text-slate-500">Keine Daten</p>';
+            return;
+        }
+        const t = data.reduce((a, d) => {
+            a.sales += d.sales;
+            a.fees += d.fees;
+            a.profit += (d.profitCent || 0);
+            return a;
+        }, {sales: 0, fees: 0, profit: 0});
+        for (const [lbl, valC] of [['Umsatz', t.sales], ['Gebühren', t.fees], ['Gewinn', t.profit]]) {
+            const div = document.createElement('div');
+            div.className = 'p-4 bg-white border rounded-md shadow-sm';
+            div.innerHTML = `<p class="text-sm text-slate-600">${lbl}</p><p class="text-lg font-bold">€${(valC / 100).toFixed(2)}</p>`;
             summaryEl.appendChild(div);
         }
     }
 
-    clearBtn.addEventListener('click',async()=>{
-        if(!confirm('Alle Daten löschen?')) return;
-        const db=await dbPromise; await Promise.all(['transactions','orders','articles','aggregates'].map(s=>db.clear(s)));
-        summaryEl.innerHTML='<p class="col-span-full text-slate-500">Alle Daten gelöscht</p>'; debugEl.textContent+='\n-- geleert --\n'; clearBtn.disabled=true;
+    clearBtn.addEventListener('click', async () => {
+        if (!confirm('Alle Daten löschen?')) return;
+        const db = await dbPromise;
+        await Promise.all(['transactions', 'orders', 'articles', 'aggregates'].map(s => db.clear(s)));
+        summaryEl.innerHTML = '<p class="col-span-full text-slate-500">Alle Daten gelöscht</p>';
+        debugEl.textContent += '\n-- geleert --\n';
+        clearBtn.disabled = true;
     });
 
     await rebuildAggregates();
     await refreshSummary();
+    await renderTables();
 </script>
 </body>
 </html>
