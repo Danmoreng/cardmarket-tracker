@@ -163,15 +163,15 @@
 
     <section id="summary" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10"></section>
 
-    <div class="bg-white rounded-lg shadow">
-        <nav class="border-b border-slate-300 flex gap-0 flex-wrap" id="tabs-nav">
+    <div>
+        <nav class="ms-2 flex gap-0 flex-wrap" id="tabs-nav">
             <button data-tab="tab-sales" class="tab-btn active">Verkäufe</button>
             <button data-tab="tab-purchases" class="tab-btn">Einkäufe</button>
             <button data-tab="tab-external-purchases" class="tab-btn">Externe Käufe</button>
             <button data-tab="tab-debug" class="tab-btn">Log</button>
         </nav>
 
-        <div id="tabs-wrapper" class="p-4 md:p-6">
+        <div id="tabs-wrapper" class="bg-white rounded-lg shadow p-4 md:p-6">
             <div id="tab-sales" class="tab-pane active"></div>
             <div id="tab-purchases" class="tab-pane"></div>
             <div id="tab-external-purchases" class="tab-pane">
@@ -814,9 +814,9 @@
 
         const netOperatingCosts = (totals.commissionFeesCent + totals.otherFeesCent + totals.shippingExpensesCent) - totals.shippingRevenueCent;
         const tiles = [
-            {label: 'Umsatz (Waren)', value: totals.salesRevenueCent, colorClass: 'text-green-600'},
-            {label: 'Einkäufe (Gesamt)', value: totals.purchaseCostsCent, colorClass: 'text-orange-600'},
-            {label: 'Nebenkosten (Netto)', value: netOperatingCosts, colorClass: netOperatingCosts >= 0 ? 'text-red-600' : 'text-sky-600'},
+            {label: 'Verkäufe', value: totals.salesRevenueCent, colorClass: 'text-green-600'},
+            {label: 'Einkäufe', value: totals.purchaseCostsCent, colorClass: 'text-orange-600'},
+            {label: 'Nebenkosten', value: netOperatingCosts, colorClass: netOperatingCosts >= 0 ? 'text-red-600' : 'text-sky-600'},
             {label: 'Gewinn / Verlust', value: totals.profitCent, colorClass: totals.profitCent >= 0 ? 'text-blue-600' : 'text-red-700 font-bold'}
         ];
         tiles.forEach(tile => {
